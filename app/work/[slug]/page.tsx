@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 async function getProject(slug: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/projects?slug=eq.${slug}&is_published=eq.true&limit=1`,
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/projects?slug=eq.${slug}&limit=1`,
     {
       headers: {
         'apikey': process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
