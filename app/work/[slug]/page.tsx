@@ -5,17 +5,18 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 
 async function getProject(slug: string) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/projects?slug=eq.${slug}&is_published=eq.true&limit=1`,
+    {
+      headers: {
+        'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+      },
+      cache: 'no-store'
+    }
   )
-  const { data } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('slug', slug)
-    .eq('is_published', true)
-    .single()
-  return data
+  const data = await res.json()
+  return data?.[0] || null
 }
 
 async function getAllSlugs() {
