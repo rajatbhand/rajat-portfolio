@@ -59,13 +59,14 @@ function renderMarkdown(content: string) {
     .join('')
 }
 
-export default async function WorkPage({ params }: { params: { slug: string } }) {
-  const work = await getProject(params.slug)
-
-  if (!work) {
-    console.error('No project found for slug:', params.slug)
-    notFound()
-  }
+// ✅ New Way (Next.js 15+)
+export default async function WorkPage({ params }: { params: Promise<{ slug: string }> }) {
+  // Await the params promise first
+  const { slug } = await params 
+  
+  const work = await getProject(slug)
+  // ...
+}
 
   return (
     <div style={{ background: COLOR.bg, color: COLOR.text, minHeight: '100vh', fontFamily: FONT_BODY }}>
