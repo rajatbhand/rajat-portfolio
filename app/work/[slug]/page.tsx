@@ -54,22 +54,22 @@ export default async function WorkPage({ params }: { params: { slug: string } })
   if (!work) notFound()
 
   return (
-    <div style={{ background: '#0a0a0a', color: '#f0ede8', minHeight: '100vh', fontFamily: 'Syne, sans-serif' }}>
+    <div style={{ background: '#0a0a0a', color: '#f0ede8', minHeight: '100vh', fontFamily: 'var(--font-body), Syne, sans-serif' }}>
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
 
       {/* Nav */}
       <nav style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 48px', background: 'linear-gradient(to bottom, rgba(10,10,10,0.98) 0%, transparent 100%)' }}>
-        <Link href="/" style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: '#fff', textDecoration: 'none' }}>
+        <Link href="/" style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 24, color: '#fff', textDecoration: 'none' }}>
           RB<span style={{ color: '#ff3c00' }}>.</span>
         </Link>
-        <Link href="/#work" style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, letterSpacing: '0.12em', color: '#666', textDecoration: 'none', textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 20px', transition: 'color 0.2s' }}>
+        <Link href="/#work" style={{ fontFamily: 'var(--font-mono), DM Mono, monospace', fontSize: 11, letterSpacing: '0.12em', color: '#666', textDecoration: 'none', textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 20px', transition: 'color 0.2s' }}>
           ← All Work
         </Link>
       </nav>
 
       {/* Hero */}
       <div style={{ padding: '48px 48px 64px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-        <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, letterSpacing: '0.25em', color: '#ff3c00', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
+        <div style={{ fontFamily: 'var(--font-mono), DM Mono, monospace', fontSize: 11, letterSpacing: '0.25em', color: '#ff3c00', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
           <span style={{ display: 'inline-block', width: 32, height: 1, background: '#ff3c00' }} />
           Case Study — {work.year}
         </div>
@@ -77,9 +77,9 @@ export default async function WorkPage({ params }: { params: { slug: string } })
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'end' }}>
           <div>
             {work.is_new && (
-              <span style={{ display: 'inline-block', fontFamily: 'DM Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#ff3c00', border: '1px solid rgba(255,60,0,0.3)', background: 'rgba(255,60,0,0.05)', padding: '3px 10px', marginBottom: 24 }}>New</span>
+              <span style={{ display: 'inline-block', fontFamily: 'var(--font-mono), DM Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#ff3c00', border: '1px solid rgba(255,60,0,0.3)', background: 'rgba(255,60,0,0.05)', padding: '3px 10px', marginBottom: 24 }}>New</span>
             )}
-            <h1 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(72px, 10vw, 160px)', lineHeight: 0.88, color: '#fff', letterSpacing: '0.02em' }}>
+            <h1 style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(72px, 10vw, 160px)', lineHeight: 0.88, color: '#fff', letterSpacing: '0.02em' }}>
               {work.title}
             </h1>
             <p style={{ marginTop: 24, fontSize: 18, lineHeight: 1.6, color: 'rgba(240,237,232,0.6)' }}>{work.subtitle}</p>
@@ -88,7 +88,7 @@ export default async function WorkPage({ params }: { params: { slug: string } })
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
             {[['Role', work.role], ['Year', work.year], ['Duration', work.duration], ['Team', work.team]].map(([label, value]) => (
               <div key={label} style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.07)', padding: '20px 24px' }}>
-                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 10, letterSpacing: '0.15em', color: '#666', textTransform: 'uppercase', marginBottom: 8 }}>{label}</div>
+                <div style={{ fontFamily: 'var(--font-mono), DM Mono, monospace', fontSize: 10, letterSpacing: '0.15em', color: '#666', textTransform: 'uppercase', marginBottom: 8 }}>{label}</div>
                 <div style={{ fontSize: 14 }}>{value}</div>
               </div>
             ))}
@@ -97,7 +97,7 @@ export default async function WorkPage({ params }: { params: { slug: string } })
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 48 }}>
           {work.tags?.map((tag: string) => (
-            <span key={tag} style={{ fontFamily: 'DM Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#666', border: '1px solid rgba(255,255,255,0.07)', padding: '4px 12px' }}>{tag}</span>
+            <span key={tag} style={{ fontFamily: 'var(--font-mono), DM Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#666', border: '1px solid rgba(255,255,255,0.07)', padding: '4px 12px' }}>{tag}</span>
           ))}
         </div>
       </div>
@@ -107,13 +107,13 @@ export default async function WorkPage({ params }: { params: { slug: string } })
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         {work.cover_image
           ? <img src={work.cover_image} alt={work.title} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
-          : <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(120px, 20vw, 200px)', color: 'rgba(255,60,0,0.08)', letterSpacing: '0.1em', position: 'relative', zIndex: 1 }}>{work.title}</div>
+          : <div style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(120px, 20vw, 200px)', color: 'rgba(255,60,0,0.08)', letterSpacing: '0.1em', position: 'relative', zIndex: 1 }}>{work.title}</div>
         }
       </div>
 
       {/* Outcome banner */}
       <div style={{ padding: '40px 48px', borderBottom: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,60,0,0.03)' }}>
-        <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 10, letterSpacing: '0.2em', color: '#ff3c00', textTransform: 'uppercase', marginBottom: 12 }}>Outcome</div>
+        <div style={{ fontFamily: 'var(--font-mono), DM Mono, monospace', fontSize: 10, letterSpacing: '0.2em', color: '#ff3c00', textTransform: 'uppercase', marginBottom: 12 }}>Outcome</div>
         <p style={{ fontSize: 18, lineHeight: 1.6, color: '#f0ede8', maxWidth: '720px', fontWeight: 600 }}>{work.outcome}</p>
       </div>
 
@@ -125,8 +125,8 @@ export default async function WorkPage({ params }: { params: { slug: string } })
 
       {/* Footer nav */}
       <div style={{ padding: '48px', borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href="/#work" style={{ fontFamily: 'DM Mono, monospace', fontSize: 12, letterSpacing: '0.12em', color: '#666', textDecoration: 'none', textTransform: 'uppercase' }}>← All Work</Link>
-        <Link href="/#contact" style={{ fontFamily: 'DM Mono, monospace', fontSize: 12, letterSpacing: '0.12em', color: '#ff3c00', textDecoration: 'none', textTransform: 'uppercase', border: '1px solid rgba(255,60,0,0.3)', padding: '12px 24px' }}>Start a project →</Link>
+        <Link href="/#work" style={{ fontFamily: 'var(--font-mono), DM Mono, monospace', fontSize: 12, letterSpacing: '0.12em', color: '#666', textDecoration: 'none', textTransform: 'uppercase' }}>← All Work</Link>
+        <Link href="/#contact" style={{ fontFamily: 'var(--font-mono), DM Mono, monospace', fontSize: 12, letterSpacing: '0.12em', color: '#ff3c00', textDecoration: 'none', textTransform: 'uppercase', border: '1px solid rgba(255,60,0,0.3)', padding: '12px 24px' }}>Start a project →</Link>
       </div>
 
       <style>{`
