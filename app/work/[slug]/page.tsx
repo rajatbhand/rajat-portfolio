@@ -59,11 +59,16 @@ function renderMarkdown(content: string) {
     .join('')
 }
 
-export default async function WorkPage({ params }: { params: { slug: string } }) {
-  const work = await getProject(params.slug)
+// ✅ HERE IS THE FIX: We tell Next.js that params is a Promise
+export default async function WorkPage({ params }: { params: Promise<{ slug: string }> }) {
+  
+  // ✅ HERE IS THE FIX: We wait for the slug to be ready before moving on
+  const { slug } = await params
+  
+  const work = await getProject(slug)
 
   if (!work) {
-    console.error('No project found for slug:', params.slug)
+    console.error('No project found for slug:', slug)
     notFound()
   }
 
