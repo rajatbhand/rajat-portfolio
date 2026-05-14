@@ -9,23 +9,14 @@ async function getProject(slug: string) {
     `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/projects?slug=eq.${slug}&is_published=eq.true&limit=1`,
     {
       headers: {
-        'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+        'apikey': process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
       },
       cache: 'no-store'
     }
   )
   const data = await res.json()
   return data?.[0] || null
-}
-
-async function getAllSlugs() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-  const { data } = await supabase.from('projects').select('slug').eq('is_published', true)
-  return (data || []).map(d => ({ slug: d.slug }))
 }
 
 function renderMarkdown(content: string) {
