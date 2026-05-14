@@ -2,360 +2,266 @@
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { WorkMeta } from '@/lib/content'
+import { COLOR, FONT_DISPLAY, FONT_BODY, FONT_MONO, VISUAL_BG, STYLES } from '@/lib/theme'
 
-interface Props {
-  works: WorkMeta[]
-  site: typeof import('@/data/site.json')
+interface WorkMeta {
+  id: string; title: string; subtitle: string; slug: string
+  display_order: number; tags: string[]; is_new: boolean
+  year: string; visual: string; summary: string
 }
-
-const VISUAL_STYLES: Record<string, string> = {
-  rely: 'bg-[#0f0f1a]',
-  portal: 'bg-[#0f1a0f]',
-  editorji: 'bg-[#1a0f0f]',
-  lab: 'bg-[#0f0f0f]',
-}
+interface Props { works: WorkMeta[]; site: any }
 
 export default function HomeClient({ works, site }: Props) {
   const cursorRef = useRef<HTMLDivElement>(null)
-  const ringRef = useRef<HTMLDivElement>(null)
-  const mouseRef = useRef({ x: 0, y: 0, rx: 0, ry: 0 })
+  const ringRef   = useRef<HTMLDivElement>(null)
+  const mouse     = useRef({ x: 0, y: 0, rx: 0, ry: 0 })
 
   useEffect(() => {
-    // Cursor
     const onMove = (e: MouseEvent) => {
-      mouseRef.current.x = e.clientX
-      mouseRef.current.y = e.clientY
+      mouse.current.x = e.clientX
+      mouse.current.y = e.clientY
       if (cursorRef.current) {
         cursorRef.current.style.left = e.clientX + 'px'
-        cursorRef.current.style.top = e.clientY + 'px'
+        cursorRef.current.style.top  = e.clientY + 'px'
       }
     }
     document.addEventListener('mousemove', onMove)
 
     let raf: number
-    const animateRing = () => {
-      mouseRef.current.rx += (mouseRef.current.x - mouseRef.current.rx) * 0.12
-      mouseRef.current.ry += (mouseRef.current.y - mouseRef.current.ry) * 0.12
+    const tick = () => {
+      mouse.current.rx += (mouse.current.x - mouse.current.rx) * 0.12
+      mouse.current.ry += (mouse.current.y - mouse.current.ry) * 0.12
       if (ringRef.current) {
-        ringRef.current.style.left = mouseRef.current.rx + 'px'
-        ringRef.current.style.top = mouseRef.current.ry + 'px'
+        ringRef.current.style.left = mouse.current.rx + 'px'
+        ringRef.current.style.top  = mouse.current.ry + 'px'
       }
-      raf = requestAnimationFrame(animateRing)
+      raf = requestAnimationFrame(tick)
     }
-    raf = requestAnimationFrame(animateRing)
+    raf = requestAnimationFrame(tick)
 
-    // Cursor hover effect
-    const links = document.querySelectorAll('a, button')
-    const onEnter = () => {
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = 'translate(-50%, -50%) scale(2)'
-        cursorRef.current.style.background = '#ffcc00'
-      }
-    }
-    const onLeave = () => {
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = 'translate(-50%, -50%) scale(1)'
-        cursorRef.current.style.background = '#ff3c00'
-      }
-    }
-    links.forEach(el => {
-      el.addEventListener('mouseenter', onEnter)
-      el.addEventListener('mouseleave', onLeave)
+    const hoverIn  = () => { if (cursorRef.current) { cursorRef.current.style.transform = 'translate(-50%,-50%) scale(2)'; cursorRef.current.style.background = COLOR.accent2 } }
+    const hoverOut = () => { if (cursorRef.current) { cursorRef.current.style.transform = 'translate(-50%,-50%) scale(1)'; cursorRef.current.style.background = COLOR.accent } }
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', hoverIn)
+      el.addEventListener('mouseleave', hoverOut)
     })
 
-    // Scroll reveal
-    const reveals = document.querySelectorAll('.reveal')
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible')
-      })
-    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' })
-    reveals.forEach(el => observer.observe(el))
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') })
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
 
-    return () => {
-      document.removeEventListener('mousemove', onMove)
-      cancelAnimationFrame(raf)
-      observer.disconnect()
-    }
+    return () => { document.removeEventListener('mousemove', onMove); cancelAnimationFrame(raf); obs.disconnect() }
   }, [])
 
   return (
     <>
       {/* Cursor */}
-      <div ref={cursorRef} className="cursor" />
-      <div ref={ringRef} className="cursor-ring" />
+      <div ref={cursorRef} style={{ position:'fixed', width:12, height:12, background:COLOR.accent, borderRadius:'50%', pointerEvents:'none', zIndex:9999, transform:'translate(-50%,-50%)', transition:'width 0.3s, height 0.3s, background 0.3s' }} />
+      <div ref={ringRef}   style={{ position:'fixed', width:36, height:36, border:'1px solid rgba(255,60,0,0.4)', borderRadius:'50%', pointerEvents:'none', zIndex:9998, transform:'translate(-50%,-50%)' }} />
 
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-12 py-6"
-        style={{ background: 'linear-gradient(to bottom, rgba(10,10,10,0.95) 0%, transparent 100%)' }}>
-        <Link href="/"
-          className="font-mono text-[13px] tracking-[0.15em] text-[var(--text)] no-underline">
-          RB<span className="text-[var(--accent)]">.</span>
+      {/* NAV */}
+      <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'24px 48px', background:'linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, transparent 100%)' }}>
+        <Link href="/" style={{ fontFamily:FONT_MONO, fontSize:13, letterSpacing:'0.15em', color:COLOR.text, textDecoration:'none' }}>
+          RB<span style={{ color:COLOR.accent }}>.</span>
         </Link>
-        <ul className="flex gap-10 list-none">
-          {['Work', 'About', 'Experience', 'Contact'].map(item => (
-            <li key={item}>
-              <a href={`#${item.toLowerCase()}`}
-                className="font-mono text-[12px] tracking-[0.12em] text-[var(--muted)] no-underline uppercase hover:text-[var(--text)] transition-colors duration-200">
-                {item}
-              </a>
-            </li>
+        <div style={{ display:'flex', gap:40 }}>
+          {['Work','About','Experience','Contact'].map(item => (
+            <a key={item} href={`#${item.toLowerCase()}`}
+              style={{ fontFamily:FONT_MONO, fontSize:12, letterSpacing:'0.12em', color:COLOR.muted, textDecoration:'none', textTransform:'uppercase', transition:'color 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = COLOR.text)}
+              onMouseLeave={e => (e.currentTarget.style.color = COLOR.muted)}>
+              {item}
+            </a>
           ))}
-        </ul>
+        </div>
       </nav>
 
-      {/* Hero */}
-      <section className="min-h-screen flex flex-col justify-end px-12 pb-20 relative overflow-hidden">
-        {/* BG lines */}
-        {[0, 1, 2].map(i => (
-          <div key={i} className="absolute top-0 w-px h-full pointer-events-none"
-            style={{
-              right: i === 0 ? 0 : i === 1 ? '33.33%' : '66.66%',
-              background: 'linear-gradient(to bottom, transparent 0%, #ff3c00 40%, transparent 100%)',
-              opacity: i === 0 ? 0.3 : i === 1 ? 0.1 : 0.08,
-              animation: `linePulse 4s ease-in-out infinite ${i * 1.5}s`,
-            }} />
+      {/* HERO */}
+      <section style={{ minHeight:'100vh', display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'0 48px 80px', position:'relative', overflow:'hidden' }}>
+        {[{r:'0px',d:'0s',o:0.25},{r:'33.33%',d:'1.5s',o:0.08},{r:'66.66%',d:'3s',o:0.06}].map((l,i) => (
+          <div key={i} style={{ position:'absolute', top:0, right:l.r, width:1, height:'100%', background:'linear-gradient(to bottom, transparent 0%, #ff3c00 40%, transparent 100%)', opacity:l.o, animation:`linePulse 4s ease-in-out ${l.d} infinite`, pointerEvents:'none' }} />
         ))}
 
-        <div className="animate-fade-up animate-delay-1 flex items-center gap-4 mb-6">
-          <div className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.15em] text-green-400 uppercase border border-green-400/20 bg-green-400/5 px-3 py-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400" style={{ animation: 'blink 2s ease-in-out infinite' }} />
+        <div className="animate-fade-up animate-delay-1" style={{ marginBottom:24 }}>
+          <span style={{ display:'inline-flex', alignItems:'center', gap:8, fontFamily:FONT_MONO, fontSize:10, letterSpacing:'0.15em', color:COLOR.green, textTransform:'uppercase', border:'1px solid rgba(74,222,128,0.25)', background:'rgba(74,222,128,0.05)', padding:'6px 14px' }}>
+            <span style={{ width:6, height:6, borderRadius:'50%', background:COLOR.green, display:'inline-block', animation:'blink 2s ease-in-out infinite' }} />
             {site.availability}
-          </div>
+          </span>
         </div>
 
-        <h1 className="animate-fade-up animate-delay-2 leading-[0.88] text-white"
-          style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(100px, 16vw, 240px)', letterSpacing: '-0.01em' }}>
+        <h1 className="animate-fade-up animate-delay-2" style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(96px, 15vw, 220px)', lineHeight:0.88, letterSpacing:'-0.01em', color:COLOR.white }}>
           {site.name.split(' ')[0]}<br />
-          <span style={{ WebkitTextStroke: '1px rgba(255,255,255,0.2)', color: 'transparent' }}>
-            {site.name.split(' ')[1].slice(0, 4)}
-          </span>
-          <span className="text-[var(--accent)]">{site.name.split(' ')[1].slice(4, 6)}</span>
-          {site.name.split(' ')[1].slice(6)}
+          <span style={{ WebkitTextStroke:'1px rgba(255,255,255,0.18)', color:'transparent' }}>BHAN</span>
+          <span style={{ color:COLOR.accent }}>DA</span>RI
         </h1>
 
-        <div className="animate-fade-up animate-delay-3 flex justify-between items-end mt-12">
-          <p className="max-w-[420px] text-[15px] leading-[1.7] text-[rgba(240,237,232,0.6)] font-[Syne,sans-serif]">
-            <strong className="text-[var(--text)]">{site.role}</strong> with {site.stats[0].num} crafting digital products across fintech, insurance, media & real estate.{' '}
-            <strong className="text-[var(--text)]">I turn complex problems into clear, elegant experiences.</strong>
+        <div className="animate-fade-up animate-delay-3" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginTop:48 }}>
+          <p style={{ maxWidth:420, fontFamily:FONT_BODY, fontSize:15, lineHeight:1.7, color:'rgba(240,237,232,0.6)' }}>
+            <strong style={{ color:COLOR.text }}>{site.role}</strong> with {site.stats[0].num} crafting digital products across fintech, insurance, media & real estate.{' '}
+            <strong style={{ color:COLOR.text }}>I turn complex problems into clear, elegant experiences.</strong>
           </p>
-          <div className="flex gap-12">
-            {site.stats.map(s => (
-              <div key={s.label} className="text-right">
-                <div style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 48, lineHeight: 1, color: 'white' }}>
-                  {s.num.replace('+', '')}<span className="text-[var(--accent)]">+</span>
+          <div style={{ display:'flex', gap:48 }}>
+            {site.stats.map((s: any) => (
+              <div key={s.label} style={{ textAlign:'right' }}>
+                <div style={{ fontFamily:FONT_DISPLAY, fontSize:52, lineHeight:1, color:COLOR.white }}>
+                  {s.num.replace('+','')}<span style={{ color:COLOR.accent }}>+</span>
                 </div>
-                <div className="font-mono text-[10px] tracking-[0.15em] text-[var(--muted)] uppercase mt-1">{s.label}</div>
+                <div style={{ fontFamily:FONT_MONO, fontSize:10, letterSpacing:'0.15em', color:COLOR.muted, textTransform:'uppercase', marginTop:4 }}>{s.label}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="animate-fade-up animate-delay-4 absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <span className="font-mono text-[10px] tracking-[0.2em] text-[var(--muted)] uppercase">Scroll</span>
-          <div className="w-px h-12" style={{ background: 'linear-gradient(to bottom, #ff3c00, transparent)', animation: 'scrollPulse 2s ease-in-out infinite' }} />
+        <div className="animate-fade-up animate-delay-4" style={{ position:'absolute', bottom:32, left:'50%', transform:'translateX(-50%)', display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
+          <span style={{ fontFamily:FONT_MONO, fontSize:10, letterSpacing:'0.2em', color:COLOR.muted, textTransform:'uppercase' }}>Scroll</span>
+          <div style={{ width:1, height:48, background:'linear-gradient(to bottom, #ff3c00, transparent)', animation:'scrollPulse 2s ease-in-out infinite' }} />
         </div>
       </section>
 
-      {/* Marquee */}
-      <div className="border-t border-b overflow-hidden py-[18px]" style={{ borderColor: 'var(--border)' }}>
-        <div className="marquee-track gap-0">
-          {[...site.marquee, ...site.marquee].map((item, i) => (
-            <div key={i} className="flex items-center gap-8 px-8 font-mono text-[11px] tracking-[0.2em] text-[var(--muted)] uppercase whitespace-nowrap">
-              <span className="w-1 h-1 rounded-full bg-[var(--accent)] flex-shrink-0" />
+      {/* MARQUEE */}
+      <div style={{ borderTop:`1px solid ${COLOR.border}`, borderBottom:`1px solid ${COLOR.border}`, padding:'18px 0', overflow:'hidden' }}>
+        <div className="marquee-track">
+          {[...site.marquee, ...site.marquee].map((item: string, i: number) => (
+            <div key={i} style={{ display:'flex', alignItems:'center', gap:32, padding:'0 32px', fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.2em', color:COLOR.muted, textTransform:'uppercase', whiteSpace:'nowrap' }}>
+              <span style={{ width:4, height:4, borderRadius:'50%', background:COLOR.accent, flexShrink:0, display:'inline-block' }} />
               {item}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Work */}
-      <section className="px-12 pt-20 pb-30" id="work">
-        <div className="reveal flex items-center gap-4 font-mono text-[11px] tracking-[0.25em] text-[var(--accent)] uppercase mb-16">
-          <span className="w-8 h-px bg-[var(--accent)]" />
-          Selected Work
+      {/* WORK */}
+      <section style={{ padding:'80px 48px 120px' }} id="work">
+        <div className="reveal" style={STYLES.sectionLabel}>
+          <span style={STYLES.accentLine} />Selected Work
         </div>
-
-        <div className="reveal flex justify-between items-end mb-20">
-          <h2 style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(56px, 8vw, 120px)', lineHeight: 0.9, color: 'white' }}>
-            CASE<br />
-            <span style={{ WebkitTextStroke: '1px rgba(255,255,255,0.15)', color: 'transparent' }}>STUDIES</span>
+        <div className="reveal" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:80 }}>
+          <h2 style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(56px, 8vw, 120px)', lineHeight:0.9, color:COLOR.white }}>
+            CASE<br /><span style={{ WebkitTextStroke:'1px rgba(255,255,255,0.15)', color:'transparent' }}>STUDIES</span>
           </h2>
-          <Link href="/work"
-            className="font-mono text-[12px] tracking-[0.12em] text-[var(--muted)] uppercase border px-6 py-3 mb-2 transition-all duration-300 hover:text-[var(--accent)] hover:border-[var(--accent)] no-underline"
-            style={{ borderColor: 'var(--border)' }}>
+          <Link href="/work" style={{ fontFamily:FONT_MONO, fontSize:12, letterSpacing:'0.12em', color:COLOR.muted, border:`1px solid ${COLOR.border}`, padding:'12px 24px', textDecoration:'none', textTransform:'uppercase', transition:'all 0.3s' }}
+            onMouseEnter={e => { e.currentTarget.style.color=COLOR.accent; e.currentTarget.style.borderColor=COLOR.accent }}
+            onMouseLeave={e => { e.currentTarget.style.color=COLOR.muted; e.currentTarget.style.borderColor=COLOR.border }}>
             View All →
           </Link>
         </div>
 
-        <div className="flex flex-col gap-0.5">
+        <div style={{ display:'flex', flexDirection:'column', gap:2 }}>
           {works.map((work, i) => (
             <Link key={work.slug} href={`/work/${work.slug}`}
-              className="group relative flex gap-12 items-center p-12 border no-underline transition-all duration-300 hover:border-[rgba(255,60,0,0.3)]"
-              style={{ background: 'var(--surface)', borderColor: 'var(--border)', animationDelay: `${i * 0.1}s` }}>
-
-              {/* Hover bg */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: 'linear-gradient(135deg, rgba(255,60,0,0.04) 0%, transparent 100%)' }} />
-
-              {/* Info */}
-              <div className="flex-1 relative z-10">
-                <div className="font-mono text-[11px] tracking-[0.2em] text-[var(--muted)] mb-6">
-                  {String(i + 1).padStart(2, '0')} / {String(works.length).padStart(2, '0')}
+              className={`reveal reveal-delay-${Math.min(i,3)}`}
+              style={{ display:'grid', gridTemplateColumns:'1fr 400px', gap:48, alignItems:'center', padding:48, background:COLOR.surface, border:`1px solid ${COLOR.border}`, textDecoration:'none', color:'inherit', position:'relative', overflow:'hidden', transition:'border-color 0.3s' }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor='rgba(255,60,0,0.35)')}
+              onMouseLeave={e => (e.currentTarget.style.borderColor=COLOR.border)}>
+              <div style={{ position:'relative', zIndex:1 }}>
+                <div style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.2em', color:COLOR.muted, marginBottom:20 }}>
+                  {String(i+1).padStart(2,'0')} / {String(works.length).padStart(2,'0')}
                 </div>
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {work.isNew && (
-                    <span className="font-mono text-[10px] tracking-[0.12em] uppercase px-3 py-1 text-[var(--accent)] border border-[rgba(255,60,0,0.3)] bg-[rgba(255,60,0,0.05)]">
-                      New
-                    </span>
-                  )}
-                  {work.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="font-mono text-[10px] tracking-[0.12em] uppercase px-3 py-1 text-[var(--muted)] border"
-                      style={{ borderColor: 'var(--border)' }}>
-                      {tag}
-                    </span>
-                  ))}
+                <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginBottom:20 }}>
+                  {work.is_new && <span style={STYLES.tagAccent}>New</span>}
+                  {work.tags.slice(0,3).map(t => <span key={t} style={STYLES.tag}>{t}</span>)}
                 </div>
-                <h3 style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(36px, 4vw, 64px)', lineHeight: 1, color: 'white', letterSpacing: '0.02em' }}>
+                <h3 style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(40px, 4vw, 72px)', lineHeight:1, color:COLOR.white, letterSpacing:'0.02em', marginBottom:16 }}>
                   {work.title}
                 </h3>
-                <p className="mt-4 text-[14px] leading-[1.7] text-[rgba(240,237,232,0.55)] max-w-sm">
+                <p style={{ fontFamily:FONT_BODY, fontSize:14, lineHeight:1.7, color:'rgba(240,237,232,0.55)', maxWidth:380 }}>
                   {work.summary}
                 </p>
               </div>
-
-              {/* Visual */}
-              <div className={`relative w-[380px] h-[260px] flex-shrink-0 border overflow-hidden flex items-center justify-center ${VISUAL_STYLES[work.visual] || 'bg-[#111]'}`}
-                style={{ borderColor: 'var(--border)' }}>
-                <div className="absolute inset-0"
-                  style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                <div style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 96, color: 'rgba(255,60,0,0.12)', letterSpacing: '0.1em', position: 'relative', zIndex: 1 }}>
-                  {work.title.slice(0, 2).toUpperCase()}
+              <div style={{ height:280, background:VISUAL_BG[work.visual] || COLOR.bg2, border:`1px solid ${COLOR.border}`, position:'relative', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <div style={{ position:'absolute', inset:0, backgroundImage:'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)', backgroundSize:'40px 40px' }} />
+                {work.visual === 'rely' && <div style={{ position:'absolute', width:160, height:160, border:'1px solid rgba(255,60,0,0.2)', borderRadius:'50%', animation:'pulseRing 3s ease-in-out infinite' }} />}
+                <div style={{ fontFamily:FONT_DISPLAY, fontSize:96, color:'rgba(255,60,0,0.1)', letterSpacing:'0.1em', position:'relative', zIndex:1 }}>
+                  {work.title.slice(0,2).toUpperCase()}
                 </div>
-                {work.visual === 'rely' && (
-                  <div className="absolute w-40 h-40 border border-[rgba(255,60,0,0.2)] rounded-full"
-                    style={{ animation: 'pulseRing 3s ease-in-out infinite' }} />
-                )}
               </div>
-
-              {/* Arrow */}
-              <div className="absolute right-12 top-12 w-10 h-10 border flex items-center justify-center text-lg transition-all duration-300 group-hover:border-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-[var(--bg)] group-hover:rotate-45"
-                style={{ borderColor: 'var(--border)' }}>
-                ↗
-              </div>
+              <div style={{ position:'absolute', right:48, top:48, width:40, height:40, border:`1px solid ${COLOR.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, color:COLOR.text, transition:'all 0.3s' }}>↗</div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* About */}
-      <section className="grid grid-cols-2 gap-30 px-12 py-30 border-t" id="about" style={{ borderColor: 'var(--border)', gap: '7.5rem', paddingTop: '7.5rem', paddingBottom: '7.5rem' }}>
-        <div className="sticky top-30" style={{ top: '7.5rem' }}>
-          <div className="reveal flex items-center gap-4 font-mono text-[11px] tracking-[0.25em] text-[var(--accent)] uppercase mb-16">
-            <span className="w-8 h-px bg-[var(--accent)]" />
-            About
-          </div>
-          <h2 className="reveal" style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(64px, 8vw, 120px)', lineHeight: 0.9, color: 'white' }}>
-            THE<br />DESIGN<br />
-            <span style={{ WebkitTextStroke: '1px rgba(255,255,255,0.12)', color: 'transparent' }}>MIND</span>
+      {/* ABOUT */}
+      <section style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'7.5rem', padding:'7.5rem 48px', borderTop:`1px solid ${COLOR.border}` }} id="about">
+        <div style={{ position:'sticky', top:'7.5rem', alignSelf:'start' }}>
+          <div className="reveal" style={STYLES.sectionLabel}><span style={STYLES.accentLine}/>About</div>
+          <h2 className="reveal" style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(64px, 8vw, 120px)', lineHeight:0.9, color:COLOR.white }}>
+            THE<br />DESIGN<br /><span style={{ WebkitTextStroke:'1px rgba(255,255,255,0.12)', color:'transparent' }}>MIND</span>
           </h2>
-          <p className="reveal font-mono text-[11px] tracking-[0.2em] text-[var(--muted)] uppercase mt-8">
+          <p className="reveal" style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.2em', color:COLOR.muted, textTransform:'uppercase', marginTop:32 }}>
             {site.location}<br />Available globally
           </p>
         </div>
-
-        <div className="pt-4">
-          {site.bio.map((p, i) => (
-            <p key={i} className={`reveal reveal-delay-${i + 1} text-[17px] leading-[1.75] text-[rgba(240,237,232,0.7)] mb-8`}
-              style={{ fontFamily: 'var(--font-body), Syne, sans-serif' }}
-              dangerouslySetInnerHTML={{ __html: p.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #f0ede8; font-weight: 600;">$1</strong>') }} />
+        <div style={{ paddingTop:4 }}>
+          {site.bio.map((p: string, i: number) => (
+            <p key={i} className={`reveal reveal-delay-${i+1}`} style={{ fontFamily:FONT_BODY, fontSize:17, lineHeight:1.75, color:'rgba(240,237,232,0.68)', marginBottom:32 }}>{p}</p>
           ))}
-
-          <div className="reveal reveal-delay-3 grid grid-cols-2 gap-0.5 mt-12">
-            {site.skills.map(skill => (
-              <div key={skill} className="flex items-center gap-3 p-5 border transition-colors duration-300 hover:border-[rgba(255,60,0,0.2)]"
-                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
-                <span className="font-mono text-[12px] tracking-[0.1em] text-[var(--muted)] uppercase">{skill}</span>
+          <div className="reveal reveal-delay-3" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:2, marginTop:48 }}>
+            {site.skills.map((skill: string) => (
+              <div key={skill} style={{ display:'flex', alignItems:'center', gap:12, padding:'20px 24px', background:COLOR.surface, border:`1px solid ${COLOR.border}`, transition:'border-color 0.3s' }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor='rgba(255,60,0,0.2)')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor=COLOR.border)}>
+                <span style={{ width:6, height:6, borderRadius:'50%', background:COLOR.accent, flexShrink:0, display:'inline-block' }} />
+                <span style={{ fontFamily:FONT_MONO, fontSize:12, letterSpacing:'0.1em', color:COLOR.muted, textTransform:'uppercase' }}>{skill}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Experience */}
-      <section className="px-12 py-30 border-t" id="experience" style={{ borderColor: 'var(--border)', paddingTop: '7.5rem', paddingBottom: '7.5rem' }}>
-        <div className="reveal flex items-center gap-4 font-mono text-[11px] tracking-[0.25em] text-[var(--accent)] uppercase mb-16">
-          <span className="w-8 h-px bg-[var(--accent)]" />
-          Experience
-        </div>
-
-        <div className="flex flex-col">
-          {site.experience.map((exp, i) => (
-            <div key={i} className={`reveal reveal-delay-${Math.min(i, 3)} grid gap-12 py-10 border-b transition-colors duration-300 hover:bg-[rgba(255,255,255,0.01)]`}
-              style={{ gridTemplateColumns: '200px 1fr 160px', borderColor: 'var(--border)' }}>
-              <div className="font-mono text-[11px] tracking-[0.12em] text-[var(--muted)] uppercase pt-1">{exp.period}</div>
-              <div>
-                <div className="text-[20px] font-bold tracking-tight text-[var(--text)] mb-1.5" style={{ fontFamily: 'var(--font-body), Syne, sans-serif' }}>{exp.role}</div>
-                <div className="font-mono text-[12px] text-[var(--accent)] tracking-[0.1em] uppercase mb-3">{exp.company}</div>
-                <div className="text-[14px] text-[rgba(240,237,232,0.5)] leading-relaxed">{exp.description}</div>
-              </div>
-              <div className="font-mono text-[10px] tracking-[0.15em] text-[var(--muted)] uppercase text-right pt-1.5">{exp.type}</div>
+      {/* EXPERIENCE */}
+      <section style={{ padding:'7.5rem 48px', borderTop:`1px solid ${COLOR.border}` }} id="experience">
+        <div className="reveal" style={STYLES.sectionLabel}><span style={STYLES.accentLine}/>Experience</div>
+        {site.experience.map((exp: any, i: number) => (
+          <div key={i} className={`reveal reveal-delay-${Math.min(i,3)}`}
+            style={{ display:'grid', gridTemplateColumns:'200px 1fr 160px', gap:48, padding:'40px 0', borderBottom:`1px solid ${COLOR.border}`, transition:'background 0.3s' }}
+            onMouseEnter={e => (e.currentTarget.style.background='rgba(255,255,255,0.01)')}
+            onMouseLeave={e => (e.currentTarget.style.background='transparent')}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.12em', color:COLOR.muted, textTransform:'uppercase', paddingTop:4 }}>{exp.period}</div>
+            <div>
+              <div style={{ fontFamily:FONT_BODY, fontSize:20, fontWeight:700, color:COLOR.text, marginBottom:6 }}>{exp.role}</div>
+              <div style={{ fontFamily:FONT_MONO, fontSize:12, color:COLOR.accent, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:12 }}>{exp.company}</div>
+              <div style={{ fontFamily:FONT_BODY, fontSize:14, color:'rgba(240,237,232,0.5)', lineHeight:1.6 }}>{exp.description}</div>
             </div>
-          ))}
-        </div>
+            <div style={{ fontFamily:FONT_MONO, fontSize:10, letterSpacing:'0.15em', color:COLOR.muted, textTransform:'uppercase', textAlign:'right', paddingTop:6 }}>{exp.type}</div>
+          </div>
+        ))}
       </section>
 
       {/* CTA */}
-      <section className="relative px-12 py-40 border-t text-center overflow-hidden" id="contact" style={{ borderColor: 'var(--border)' }}>
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 280, color: 'rgba(255,60,0,0.03)', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
-          HIRE ME
+      <section style={{ padding:'160px 48px', borderTop:`1px solid ${COLOR.border}`, textAlign:'center', position:'relative', overflow:'hidden' }} id="contact">
+        <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', pointerEvents:'none' }}>
+          <span style={{ fontFamily:FONT_DISPLAY, fontSize:'min(280px, 20vw)', color:'rgba(255,60,0,0.03)', letterSpacing:'0.1em', whiteSpace:'nowrap' }}>HIRE ME</span>
         </div>
-
-        <div className="reveal flex items-center justify-center gap-4 font-mono text-[11px] tracking-[0.25em] text-[var(--accent)] uppercase mb-8">
-          <span className="w-8 h-px bg-[var(--accent)]" />
-          Let's work together
-          <span className="w-8 h-px bg-[var(--accent)]" />
-        </div>
-
-        <h2 className="reveal" style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(56px, 10vw, 160px)', lineHeight: 0.9, color: 'white', marginBottom: 48 }}>
-          LET'S<br />
-          <span style={{ WebkitTextStroke: '1px rgba(255,255,255,0.15)', color: 'transparent' }}>TALK</span>
+        <div className="reveal" style={{ ...STYLES.sectionLabel, justifyContent:'center' }}><span style={STYLES.accentLine}/>Let's work together<span style={STYLES.accentLine}/></div>
+        <h2 className="reveal" style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(56px, 10vw, 160px)', lineHeight:0.9, color:COLOR.white, marginBottom:48 }}>
+          LET'S<br /><span style={{ WebkitTextStroke:'1px rgba(255,255,255,0.15)', color:'transparent' }}>TALK</span>
         </h2>
-
-        <a href={`mailto:${site.email}`}
-          className="reveal inline-flex items-center gap-4 font-mono text-[14px] tracking-[0.1em] text-[var(--text)] no-underline border px-10 py-5 transition-all duration-300 hover:text-white hover:border-[var(--accent)] hover:bg-[var(--accent)] relative overflow-hidden"
-          style={{ borderColor: 'var(--border)' }}>
+        <a href={`mailto:${site.email}`} className="reveal"
+          style={{ display:'inline-flex', alignItems:'center', gap:16, fontFamily:FONT_MONO, fontSize:14, letterSpacing:'0.1em', color:COLOR.text, textDecoration:'none', border:`1px solid ${COLOR.border}`, padding:'20px 40px', transition:'all 0.3s' }}
+          onMouseEnter={e => { e.currentTarget.style.background=COLOR.accent; e.currentTarget.style.borderColor=COLOR.accent; e.currentTarget.style.color='#fff' }}
+          onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor=COLOR.border; e.currentTarget.style.color=COLOR.text }}>
           <span>→</span> {site.email}
         </a>
-
-        <div className="reveal flex justify-center gap-8 mt-10">
+        <div className="reveal" style={{ display:'flex', justifyContent:'center', gap:32, marginTop:40 }}>
           {Object.entries(site.social).map(([key, url]) => (
-            <a key={key} href={url} target="_blank" rel="noopener noreferrer"
-              className="font-mono text-[11px] tracking-[0.15em] text-[var(--muted)] uppercase no-underline transition-colors duration-200 hover:text-[var(--accent)]">
-              {key.charAt(0).toUpperCase() + key.slice(1)}
+            <a key={key} href={url as string} target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.15em', color:COLOR.muted, textDecoration:'none', textTransform:'uppercase', transition:'color 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.color=COLOR.accent)}
+              onMouseLeave={e => (e.currentTarget.style.color=COLOR.muted)}>
+              {key.charAt(0).toUpperCase()+key.slice(1)}
             </a>
           ))}
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="flex justify-between items-center px-12 py-8 border-t" style={{ borderColor: 'var(--border)' }}>
-        <p className="font-mono text-[11px] tracking-[0.12em] text-[var(--muted)] uppercase">
-          © 2025 <span className="text-[var(--accent)]">{site.name}</span>
-        </p>
-        <p className="font-mono text-[11px] tracking-[0.12em] text-[var(--muted)] uppercase">{site.location} — Available globally</p>
-        <p className="font-mono text-[11px] tracking-[0.12em] text-[var(--muted)] uppercase">Designed with <span className="text-[var(--accent)]">intention</span></p>
+      {/* FOOTER */}
+      <footer style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'32px 48px', borderTop:`1px solid ${COLOR.border}` }}>
+        <p style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.12em', color:COLOR.muted, textTransform:'uppercase' }}>© 2025 <span style={{ color:COLOR.accent }}>{site.name}</span></p>
+        <p style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.12em', color:COLOR.muted, textTransform:'uppercase' }}>{site.location} — Available globally</p>
+        <p style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.12em', color:COLOR.muted, textTransform:'uppercase' }}>Designed with <span style={{ color:COLOR.accent }}>intention</span></p>
       </footer>
-
-      <style jsx global>{`
-        @keyframes linePulse { 0%, 100% { opacity: 0.05; transform: scaleY(0.8); } 50% { opacity: 0.3; transform: scaleY(1); } }
-        @keyframes pulseRing { 0%, 100% { transform: scale(0.8); opacity: 0.3; } 50% { transform: scale(1.1); opacity: 0.7; } }
-        @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-      `}</style>
     </>
   )
 }
