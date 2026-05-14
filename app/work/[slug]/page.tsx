@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 async function getProject(slug: string) {
   const supabase = createClient(
@@ -25,10 +25,6 @@ async function getAllSlugs() {
   )
   const { data } = await supabase.from('projects').select('slug').eq('is_published', true)
   return (data || []).map(d => ({ slug: d.slug }))
-}
-
-export async function generateStaticParams() {
-  return getAllSlugs()
 }
 
 function renderMarkdown(content: string) {
