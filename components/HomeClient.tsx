@@ -126,7 +126,7 @@ export default function HomeClient({ works, site }: Props) {
         </div>
 
         <h1 className="animate-fade-up animate-delay-2 leading-[0.88] text-white"
-          style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(100px, 16vw, 240px)', letterSpacing: '-0.01em' }}>
+          style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(100px, 16vw, 240px)', letterSpacing: '-0.01em' }}>
           {site.name.split(' ')[0]}<br />
           <span style={{ WebkitTextStroke: '1px rgba(255,255,255,0.2)', color: 'transparent' }}>
             {site.name.split(' ')[1].slice(0, 4)}
@@ -143,7 +143,7 @@ export default function HomeClient({ works, site }: Props) {
           <div className="flex gap-12">
             {site.stats.map(s => (
               <div key={s.label} className="text-right">
-                <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 48, lineHeight: 1, color: 'white' }}>
+                <div style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 48, lineHeight: 1, color: 'white' }}>
                   {s.num.replace('+', '')}<span className="text-[var(--accent)]">+</span>
                 </div>
                 <div className="font-mono text-[10px] tracking-[0.15em] text-[var(--muted)] uppercase mt-1">{s.label}</div>
@@ -178,7 +178,7 @@ export default function HomeClient({ works, site }: Props) {
         </div>
 
         <div className="reveal flex justify-between items-end mb-20">
-          <h2 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(56px, 8vw, 120px)', lineHeight: 0.9, color: 'white' }}>
+          <h2 style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(56px, 8vw, 120px)', lineHeight: 0.9, color: 'white' }}>
             CASE<br />
             <span style={{ WebkitTextStroke: '1px rgba(255,255,255,0.15)', color: 'transparent' }}>STUDIES</span>
           </h2>
@@ -217,7 +217,7 @@ export default function HomeClient({ works, site }: Props) {
                     </span>
                   ))}
                 </div>
-                <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(36px, 4vw, 64px)', lineHeight: 1, color: 'white', letterSpacing: '0.02em' }}>
+                <h3 style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(36px, 4vw, 64px)', lineHeight: 1, color: 'white', letterSpacing: '0.02em' }}>
                   {work.title}
                 </h3>
                 <p className="mt-4 text-[14px] leading-[1.7] text-[rgba(240,237,232,0.55)] max-w-sm">
@@ -230,7 +230,7 @@ export default function HomeClient({ works, site }: Props) {
                 style={{ borderColor: 'var(--border)' }}>
                 <div className="absolute inset-0"
                   style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 96, color: 'rgba(255,60,0,0.12)', letterSpacing: '0.1em', position: 'relative', zIndex: 1 }}>
+                <div style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 96, color: 'rgba(255,60,0,0.12)', letterSpacing: '0.1em', position: 'relative', zIndex: 1 }}>
                   {work.title.slice(0, 2).toUpperCase()}
                 </div>
                 {work.visual === 'rely' && (
@@ -256,7 +256,7 @@ export default function HomeClient({ works, site }: Props) {
             <span className="w-8 h-px bg-[var(--accent)]" />
             About
           </div>
-          <h2 className="reveal" style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(64px, 8vw, 120px)', lineHeight: 0.9, color: 'white' }}>
+          <h2 className="reveal" style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(64px, 8vw, 120px)', lineHeight: 0.9, color: 'white' }}>
             THE<br />DESIGN<br />
             <span style={{ WebkitTextStroke: '1px rgba(255,255,255,0.12)', color: 'transparent' }}>MIND</span>
           </h2>
@@ -268,7 +268,7 @@ export default function HomeClient({ works, site }: Props) {
         <div className="pt-4">
           {site.bio.map((p, i) => (
             <p key={i} className={`reveal reveal-delay-${i + 1} text-[17px] leading-[1.75] text-[rgba(240,237,232,0.7)] mb-8`}
-              style={{ fontFamily: 'Syne, sans-serif' }}
+              style={{ fontFamily: 'var(--font-body), Syne, sans-serif' }}
               dangerouslySetInnerHTML={{ __html: p.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #f0ede8; font-weight: 600;">$1</strong>') }} />
           ))}
 
@@ -297,7 +297,7 @@ export default function HomeClient({ works, site }: Props) {
               style={{ gridTemplateColumns: '200px 1fr 160px', borderColor: 'var(--border)' }}>
               <div className="font-mono text-[11px] tracking-[0.12em] text-[var(--muted)] uppercase pt-1">{exp.period}</div>
               <div>
-                <div className="text-[20px] font-bold tracking-tight text-[var(--text)] mb-1.5" style={{ fontFamily: 'Syne, sans-serif' }}>{exp.role}</div>
+                <div className="text-[20px] font-bold tracking-tight text-[var(--text)] mb-1.5" style={{ fontFamily: 'var(--font-body), Syne, sans-serif' }}>{exp.role}</div>
                 <div className="font-mono text-[12px] text-[var(--accent)] tracking-[0.1em] uppercase mb-3">{exp.company}</div>
                 <div className="text-[14px] text-[rgba(240,237,232,0.5)] leading-relaxed">{exp.description}</div>
               </div>
@@ -310,7 +310,7 @@ export default function HomeClient({ works, site }: Props) {
       {/* CTA */}
       <section className="relative px-12 py-40 border-t text-center overflow-hidden" id="contact" style={{ borderColor: 'var(--border)' }}>
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 280, color: 'rgba(255,60,0,0.03)', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
+          style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 280, color: 'rgba(255,60,0,0.03)', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
           HIRE ME
         </div>
 
@@ -320,7 +320,7 @@ export default function HomeClient({ works, site }: Props) {
           <span className="w-8 h-px bg-[var(--accent)]" />
         </div>
 
-        <h2 className="reveal" style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(56px, 10vw, 160px)', lineHeight: 0.9, color: 'white', marginBottom: 48 }}>
+        <h2 className="reveal" style={{ fontFamily: 'var(--font-display), Bebas Neue, sans-serif', fontSize: 'clamp(56px, 10vw, 160px)', lineHeight: 0.9, color: 'white', marginBottom: 48 }}>
           LET'S<br />
           <span style={{ WebkitTextStroke: '1px rgba(255,255,255,0.15)', color: 'transparent' }}>TALK</span>
         </h2>
