@@ -1,0 +1,72 @@
+{
+  "name": "Rajat Bhandari",
+  "initials": "RB",
+  "role": "Senior UX Designer",
+  "tagline": "I turn complex problems into clear, elegant experiences.",
+  "bio": [
+    "Senior UX Designer with over a decade of experience building digital products across fintech, insurance, media, edtech and real estate. I work across the full spectrum — from early discovery and research through to polished, production-ready design.",
+    "What drives me is the intersection of clarity and craft — making complex systems feel simple without losing depth. I'm currently exploring opportunities in brand strategy, communications and senior product design roles.",
+    "I work fluently across the research-to-delivery pipeline: user interviews, personas, journey mapping, IA, wireframing, prototyping and visual design — and I know how to communicate design decisions to stakeholders without losing the room."
+  ],
+  "location": "Bangalore, India",
+  "availability": "Open to opportunities",
+  "email": "rajat.rajat.bhandari.1@gmail.com",
+  "stats": [
+    { "num": "11+", "label": "Years exp." },
+    { "num": "20+", "label": "Projects" },
+    { "num": "8+", "label": "Industries" }
+  ],
+  "skills": [
+    "Figma", "User Research", "Design Systems", "Prototyping",
+    "Webflow", "Journey Mapping", "IA & Flows", "Usability Testing"
+  ],
+  "marquee": [
+    "User Research", "Interaction Design", "Design Systems",
+    "Prototyping", "Figma", "Journey Mapping", "UX Strategy",
+    "Usability Testing", "Information Architecture", "Visual Design"
+  ],
+  "social": {
+    "linkedin": "https://www.linkedin.com/in/rajatbhand/",
+    "behance": "https://www.behance.net/bhandrajat",
+    "dribbble": "https://dribbble.com/BhandRajat",
+    "instagram": "https://www.instagram.com/bhandrajat/"
+  },
+  "resume": "https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing",
+  "experience": [
+    {
+      "period": "2025 — Present",
+      "role": "Senior UX Designer",
+      "company": "Grid Dynamics",
+      "description": "Platform and design systems work for enterprise clients.",
+      "type": "Full-time"
+    },
+    {
+      "period": "2022 — 2025",
+      "role": "Senior UX Designer",
+      "company": "Aubergine Solutions",
+      "description": "Led UX for multi-sided platforms. Built and maintained Figma design systems. Ran end-to-end research and design sprints.",
+      "type": "Full-time"
+    },
+    {
+      "period": "2020 — 2022",
+      "role": "UI/UX Manager",
+      "company": "Editorji Technologies",
+      "description": "Led product design for a news aggregation platform, focused on personalisation and retention.",
+      "type": "Full-time"
+    },
+    {
+      "period": "2019 — 2020",
+      "role": "UI/UX Designer",
+      "company": "Itu Chaudhuri Design",
+      "description": "Delivered UI/UX for mobile and web products across multiple industries.",
+      "type": "Full-time"
+    },
+    {
+      "period": "2017 — 2019",
+      "role": "UI/UX Designer",
+      "company": "Gemini Solutions",
+      "description": "Designed enterprise web apps for insurance and fintech. Led the Partner Portal project end-to-end.",
+      "type": "Full-time"
+    }
+  ]
+}
