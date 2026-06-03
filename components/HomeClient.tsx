@@ -30,13 +30,7 @@ export default function HomeClient({ works, site }: { works: any[], site: any })
 
       {/* HERO */}
       <section className="rb-hero">
-        <div className="rb-cloud-layer">
-          <div className="rb-cloud rb-c1"></div>
-          <div className="rb-cloud rb-c2"></div>
-          <div className="rb-cloud rb-c3"></div>
-          <div className="rb-cloud rb-c4"></div>
-        </div>
-        <div className="rb-hero-content">
+<div className="rb-hero-content">
           <h1 className="rb-hero-h1">Senior UX Designer<br/>based in Bangalore</h1>
           <p className="rb-hero-sub">11+ years designing digital products across fintech,<br/>insurance, media and real estate.</p>
           <div className="rb-hero-btns">

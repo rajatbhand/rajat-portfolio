@@ -19,18 +19,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: #0
 
 /* ── HERO ── */
 .rb-hero { min-height: 100vh; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 60px 60px; background: linear-gradient(180deg, #2196f3 0%, #42a5f5 25%, #64b5f6 50%, #90caf9 70%, #bbdefb 85%, #e3f2fd 95%, #f5f9ff 100%); }
-.rb-cloud-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.rb-cloud { position: absolute; background: rgba(255,255,255,0.85); border-radius: 50%; }
-.rb-c1 { width:500px;height:160px;top:18%;left:-60px;filter:blur(2px); }
-.rb-c1::before { content:'';position:absolute;width:260px;height:200px;background:inherit;border-radius:50%;top:-80px;left:60px; }
-.rb-c1::after { content:'';position:absolute;width:200px;height:160px;background:inherit;border-radius:50%;top:-60px;left:180px; }
-.rb-c2 { width:420px;height:130px;top:22%;right:-40px;filter:blur(2px); }
-.rb-c2::before { content:'';position:absolute;width:220px;height:180px;background:inherit;border-radius:50%;top:-70px;left:80px; }
-.rb-c2::after { content:'';position:absolute;width:160px;height:140px;background:inherit;border-radius:50%;top:-50px;right:40px; }
-.rb-c3 { width:340px;height:100px;top:62%;left:5%;filter:blur(3px);opacity:0.65; }
-.rb-c3::before { content:'';position:absolute;width:180px;height:150px;background:inherit;border-radius:50%;top:-60px;left:50px; }
-.rb-c4 { width:280px;height:90px;top:65%;right:8%;filter:blur(2px);opacity:0.7; }
-.rb-c4::before { content:'';position:absolute;width:150px;height:130px;background:inherit;border-radius:50%;top:-55px;left:40px; }
 
 .rb-hero-content { position: relative; z-index: 10; text-align: center; max-width: 680px; margin-bottom: 56px; }
 .rb-hero-h1 { font-size: clamp(44px,6vw,76px); font-weight: 800; line-height: 1.06; letter-spacing: -0.03em; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.12); margin-bottom: 20px; }
