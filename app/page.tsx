@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import siteData from '@/data/site.json'
 import HomeClient from '@/components/HomeClient'
 
-export const revalidate = 60 // revalidate every 60 seconds
+export const dynamic = 'force-dynamic'
 
 async function getProjects() {
   const supabase = createClient(
