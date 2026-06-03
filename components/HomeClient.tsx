@@ -1,266 +1,325 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import Link from 'next/link'
-import { COLOR, FONT_DISPLAY, FONT_BODY, FONT_MONO, VISUAL_BG, STYLES } from '@/lib/theme'
 
 interface WorkMeta {
-  id: string; title: string; subtitle: string; slug: string
-  display_order: number; tags: string[]; is_new: boolean
-  year: string; visual: string; summary: string
+  id: string
+  title: string
+  slug: string
+  tags: string[]
+  is_new: boolean
+  summary: string
+  visual: string
 }
-interface Props { works: WorkMeta[]; site: any }
+
+interface Props {
+  works: WorkMeta[]
+  site: any
+}
 
 export default function HomeClient({ works, site }: Props) {
-  const cursorRef = useRef<HTMLDivElement>(null)
-  const ringRef   = useRef<HTMLDivElement>(null)
-  const mouse     = useRef({ x: 0, y: 0, rx: 0, ry: 0 })
-
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mouse.current.x = e.clientX
-      mouse.current.y = e.clientY
-      if (cursorRef.current) {
-        cursorRef.current.style.left = e.clientX + 'px'
-        cursorRef.current.style.top  = e.clientY + 'px'
-      }
-    }
-    document.addEventListener('mousemove', onMove)
-
-    let raf: number
-    const tick = () => {
-      mouse.current.rx += (mouse.current.x - mouse.current.rx) * 0.12
-      mouse.current.ry += (mouse.current.y - mouse.current.ry) * 0.12
-      if (ringRef.current) {
-        ringRef.current.style.left = mouse.current.rx + 'px'
-        ringRef.current.style.top  = mouse.current.ry + 'px'
-      }
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-
-    const hoverIn  = () => { if (cursorRef.current) { cursorRef.current.style.transform = 'translate(-50%,-50%) scale(2)'; cursorRef.current.style.background = COLOR.accent2 } }
-    const hoverOut = () => { if (cursorRef.current) { cursorRef.current.style.transform = 'translate(-50%,-50%) scale(1)'; cursorRef.current.style.background = COLOR.accent } }
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', hoverIn)
-      el.addEventListener('mouseleave', hoverOut)
-    })
-
+    // Scroll reveal
+    const els = document.querySelectorAll('.reveal')
     const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') })
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target) }
+      })
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
-
-    return () => { document.removeEventListener('mousemove', onMove); cancelAnimationFrame(raf); obs.disconnect() }
+    els.forEach(el => obs.observe(el))
+    return () => obs.disconnect()
   }, [])
 
   return (
     <>
-      {/* Cursor */}
-      <div ref={cursorRef} style={{ position:'fixed', width:12, height:12, background:COLOR.accent, borderRadius:'50%', pointerEvents:'none', zIndex:9999, transform:'translate(-50%,-50%)', transition:'width 0.3s, height 0.3s, background 0.3s' }} />
-      <div ref={ringRef}   style={{ position:'fixed', width:36, height:36, border:'1px solid rgba(255,60,0,0.4)', borderRadius:'50%', pointerEvents:'none', zIndex:9998, transform:'translate(-50%,-50%)' }} />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #ffffff; color: #0a0a0a; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .nav-logo { font-size: 28px; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: -0.04em; display: flex; align-items: center; gap: 0; line-height: 1; }
+        .nav-logo .reg { font-size: 22px; font-weight: 800; color: rgba(255,255,255,0.9); position: relative; top: 0px; margin-right: 0px; letter-spacing: -0.02em; }
+        .nav-link { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); text-decoration: none; padding: 8px 16px; border-radius: 8px; letter-spacing: 0.04em; text-transform: uppercase; transition: background 0.15s, color 0.15s; }
+        .nav-link:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .hero { min-height: 100vh; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 60px 60px; background: linear-gradient(180deg, #2196f3 0%, #42a5f5 25%, #64b5f6 50%, #90caf9 70%, #bbdefb 85%, #e3f2fd 95%, #f5f9ff 100%); }
+        .cloud-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+        .cloud { position: absolute; background: rgba(255,255,255,0.85); border-radius: 50%; }
+        .c1 { width:500px;height:160px; top:18%;left:-60px; filter:blur(2px); }
+        .c1::before { content:''; position:absolute; width:260px;height:200px; background:inherit; border-radius:50%; top:-80px;left:60px; }
+        .c1::after { content:''; position:absolute; width:200px;height:160px; background:inherit; border-radius:50%; top:-60px;left:180px; }
+        .c2 { width:420px;height:130px; top:22%;right:-40px; filter:blur(2px); }
+        .c2::before { content:''; position:absolute; width:220px;height:180px; background:inherit; border-radius:50%; top:-70px;left:80px; }
+        .c2::after { content:''; position:absolute; width:160px;height:140px; background:inherit; border-radius:50%; top:-50px;right:40px; }
+        .c3 { width:340px;height:100px; top:62%;left:5%; filter:blur(3px); opacity:0.65; }
+        .c3::before { content:''; position:absolute; width:180px;height:150px; background:inherit; border-radius:50%; top:-60px;left:50px; }
+        .c4 { width:280px;height:90px; top:65%;right:8%; filter:blur(2px); opacity:0.7; }
+        .c4::before { content:''; position:absolute; width:150px;height:130px; background:inherit; border-radius:50%; top:-55px;left:40px; }
+        .hero-content { position: relative; z-index: 10; text-align: center; max-width: 680px; margin-bottom: 56px; }
+        .hero-h1 { font-size: clamp(44px, 6vw, 76px); font-weight: 800; line-height: 1.06; letter-spacing: -0.03em; color: #ffffff; text-shadow: 0 2px 20px rgba(0,0,0,0.12); margin-bottom: 20px; }
+        .hero-sub { font-size: 16px; font-weight: 400; line-height: 1.65; color: rgba(255,255,255,0.82); margin-bottom: 36px; text-shadow: 0 1px 8px rgba(0,0,0,0.1); }
+        .hero-btns { display: flex; gap: 12px; align-items: center; justify-content: center; }
+        .btn-outline-white { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(8px); padding: 12px 24px; border-radius: 100px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; transition: background 0.2s; }
+        .btn-outline-white:hover { background: rgba(255,255,255,0.2); }
+        .btn-yellow { font-size: 13px; font-weight: 700; color: #0a0a0a; background: #d4f53c; padding: 12px 24px; border-radius: 100px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; transition: opacity 0.2s; box-shadow: 0 4px 20px rgba(212,245,60,0.35); }
+        .btn-yellow:hover { opacity: 0.9; }
+        .btn-yellow-arrow { width: 22px; height: 22px; border-radius: 50%; background: #0a0a0a; display: flex; align-items: center; justify-content: center; }
+        .carousel-wrap { position: relative; z-index: 10; width: 100vw; overflow: hidden; margin-left: -60px; padding: 8px 0 24px; }
+        .carousel-track { display: flex; gap: 16px; animation: carouselScroll 28s linear infinite; width: max-content; padding: 8px 60px; }
+        .carousel-track:hover { animation-play-state: paused; }
+        @keyframes carouselScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .c-card { flex-shrink: 0; width: 260px; height: 180px; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 16px 48px rgba(0,0,0,0.18); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; }
+        .c-card:hover { transform: translateY(-6px); box-shadow: 0 24px 64px rgba(0,0,0,0.22); }
+        .c-card-inner { width: 100%; height: 100%; padding: 16px; display: flex; flex-direction: column; }
+        .c-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .c-card-name { font-size: 11px; font-weight: 700; color: #0a0a0a; letter-spacing: 0.02em; }
+        .c-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .c-card-big { font-size: 30px; font-weight: 800; color: #0a0a0a; letter-spacing: -0.03em; line-height: 1; }
+        .c-card-label { font-size: 10px; color: #888; margin-top: 3px; font-weight: 500; }
+        .c-bar-bg { height: 3px; background: #e5e5e5; border-radius: 2px; margin: 10px 0; }
+        .c-bar-fg { height: 100%; border-radius: 2px; background: #d4f53c; }
+        .c-rows { display: flex; flex-direction: column; gap: 4px; }
+        .c-row { display: flex; justify-content: space-between; align-items: center; background: #f5f5f7; border-radius: 6px; padding: 4px 8px; }
+        .c-row-l { font-size: 9px; color: #555; font-weight: 500; }
+        .c-row-r { font-size: 9px; color: #0a0a0a; font-weight: 700; }
+        .c-card.dark .c-card-inner { background: #0a0a0a; }
+        .c-card.dark .c-card-name { color: rgba(255,255,255,0.5); }
+        .c-card.dark .c-card-big { color: #fff; }
+        .c-card.dark .c-card-label { color: rgba(255,255,255,0.35); }
+        .c-card.dark .c-bar-bg { background: rgba(255,255,255,0.1); }
+        .c-card.dark .c-row { background: rgba(255,255,255,0.06); }
+        .c-card.dark .c-row-l { color: rgba(255,255,255,0.4); }
+        .c-card.dark .c-row-r { color: #d4f53c; }
+        #work { background: #f5f5f7; padding: 100px 60px; }
+        .work-heading { text-align: center; margin-bottom: 56px; }
+        .work-eyebrow { font-size: 12px; font-weight: 600; color: #888; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .work-eyebrow::before { content: '•'; color: #0a0a0a; }
+        .work-h2 { font-size: clamp(34px, 4.5vw, 56px); font-weight: 800; letter-spacing: -0.035em; color: #0a0a0a; line-height: 1.06; margin-bottom: 14px; }
+        .work-sub { font-size: 15px; color: #888; line-height: 1.7; max-width: 460px; margin: 0 auto; font-weight: 400; }
+        .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1100px; margin: 0 auto; }
+        .work-card { background: #ffffff; border: 1px solid #e8e8e8; border-radius: 20px; overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: box-shadow 0.3s, transform 0.3s; cursor: pointer; }
+        .work-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,0.1); transform: translateY(-4px); }
+        .work-card-visual { min-height: 260px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 32px; background: #ffffff; }
+        .wc-mock { background: #111; border-radius: 14px; box-shadow: 0 16px 48px rgba(0,0,0,0.2); padding: 16px; width: 200px; position: relative; z-index: 2; }
+        .wc-mock-back { background: #1a1a1a; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); padding: 14px; width: 170px; position: absolute; z-index: 1; }
+        .wc-mock-title { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+        .wc-mock-big { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1; }
+        .wc-mock-label { font-size: 9px; color: rgba(255,255,255,0.35); margin-top: 3px; }
+        .wc-mock-bar-bg { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 10px 0; }
+        .wc-mock-bar-fg { height: 100%; border-radius: 2px; background: #d4f53c; }
+        .wc-mock-row { display: flex; justify-content: space-between; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-top: 4px; }
+        .wc-mock-row-l { font-size: 8px; color: rgba(255,255,255,0.4); }
+        .wc-mock-row-r { font-size: 8px; color: #d4f53c; font-weight: 700; }
+        .work-card-info { padding: 22px 26px 26px; border-top: 1px solid #f0f0f0; }
+        .work-card-title { font-size: 19px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.02em; margin-bottom: 8px; line-height: 1.2; }
+        .work-card-desc { font-size: 14px; color: #888; line-height: 1.65; font-weight: 400; }
+        footer { background: #fff; padding: 40px 60px 60px; }
+        .footer-card { max-width: 1100px; margin: 0 auto; background: #0e0e0e; border-radius: 24px; padding: 60px 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; position: relative; overflow: hidden; min-height: 380px; }
+        .cta-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.2; }
+        .cta-blob-1 { width:400px;height:400px; background:#2196f3; top:-150px;left:-100px; }
+        .cta-blob-2 { width:300px;height:300px; background:#d4f53c; bottom:-100px;right:-80px; }
+        .footer-cta { display: flex; flex-direction: column; justify-content: space-between; position: relative; z-index: 1; }
+        .footer-eyebrow { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.35); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 16px; }
+        .footer-h2 { font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
+        .footer-sub { font-size: 15px; color: rgba(255,255,255,0.35); line-height: 1.7; font-weight: 400; margin-bottom: 32px; max-width: 360px; }
+        .btn-cta-yellow { font-size: 13px; font-weight: 700; color: #0a0a0a; background: #d4f53c; padding: 13px 28px; border-radius: 100px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; transition: opacity 0.2s; width: fit-content; }
+        .btn-cta-yellow:hover { opacity: 0.88; }
+        .footer-right-col { display: flex; flex-direction: column; justify-content: space-between; padding-top: 4px; position: relative; z-index: 1; }
+        .footer-col-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; }
+        .footer-link { display: block; font-size: 16px; font-weight: 400; color: rgba(255,255,255,0.55); text-decoration: none; margin-bottom: 12px; transition: color 0.2s; }
+        .footer-link:hover { color: #fff; }
+        .footer-socials-row { display: flex; gap: 10px; align-items: center; }
+        .footer-social-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 16px; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+        .footer-social-icon:hover { background: rgba(255,255,255,0.14); color: #fff; border-color: rgba(255,255,255,0.22); }
+        .reveal { opacity:0; transform:translateY(20px); transition:opacity 0.65s ease,transform 0.65s ease; }
+        .reveal.in { opacity:1; transform:translateY(0); }
+        .d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+      `}</style>
 
       {/* NAV */}
-      <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'24px 48px', background:'linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, transparent 100%)' }}>
-        <Link href="/" style={{ fontFamily:FONT_MONO, fontSize:13, letterSpacing:'0.15em', color:COLOR.text, textDecoration:'none' }}>
-          RB<span style={{ color:COLOR.accent }}>.</span>
+      <nav style={{ position:'absolute', top:0, left:0, right:0, zIndex:100, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 60px', height:72 }}>
+        <Link href="/" className="nav-logo">
+          <span className="reg">®</span>B
         </Link>
-        <div style={{ display:'flex', gap:40 }}>
-          {['Work','About','Experience','Contact'].map(item => (
-            <a key={item} href={`#${item.toLowerCase()}`}
-              style={{ fontFamily:FONT_MONO, fontSize:12, letterSpacing:'0.12em', color:COLOR.muted, textDecoration:'none', textTransform:'uppercase', transition:'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = COLOR.text)}
-              onMouseLeave={e => (e.currentTarget.style.color = COLOR.muted)}>
-              {item}
-            </a>
-          ))}
+        <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+          <a href="#work" className="nav-link">WORK</a>
+          <Link href="/about" className="nav-link">ABOUT</Link>
+          <a href="https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing" target="_blank" className="nav-link">RESUME</a>
         </div>
       </nav>
 
       {/* HERO */}
-      <section style={{ minHeight:'100vh', display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'0 48px 80px', position:'relative', overflow:'hidden' }}>
-        {[{r:'0px',d:'0s',o:0.25},{r:'33.33%',d:'1.5s',o:0.08},{r:'66.66%',d:'3s',o:0.06}].map((l,i) => (
-          <div key={i} style={{ position:'absolute', top:0, right:l.r, width:1, height:'100%', background:'linear-gradient(to bottom, transparent 0%, #ff3c00 40%, transparent 100%)', opacity:l.o, animation:`linePulse 4s ease-in-out ${l.d} infinite`, pointerEvents:'none' }} />
-        ))}
-
-        <div className="animate-fade-up animate-delay-1" style={{ marginBottom:24 }}>
-          <span style={{ display:'inline-flex', alignItems:'center', gap:8, fontFamily:FONT_MONO, fontSize:10, letterSpacing:'0.15em', color:COLOR.green, textTransform:'uppercase', border:'1px solid rgba(74,222,128,0.25)', background:'rgba(74,222,128,0.05)', padding:'6px 14px' }}>
-            <span style={{ width:6, height:6, borderRadius:'50%', background:COLOR.green, display:'inline-block', animation:'blink 2s ease-in-out infinite' }} />
-            {site.availability}
-          </span>
+      <section className="hero">
+        <div className="cloud-layer">
+          <div className="cloud c1"></div>
+          <div className="cloud c2"></div>
+          <div className="cloud c3"></div>
+          <div className="cloud c4"></div>
         </div>
 
-        <h1 className="animate-fade-up animate-delay-2" style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(96px, 15vw, 220px)', lineHeight:0.88, letterSpacing:'-0.01em', color:COLOR.white }}>
-          {site.name.split(' ')[0]}<br />
-          <span style={{ WebkitTextStroke:'1px rgba(255,255,255,0.18)', color:'transparent' }}>BHAN</span>
-          <span style={{ color:COLOR.accent }}>DA</span>RI
-        </h1>
-
-        <div className="animate-fade-up animate-delay-3" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginTop:48 }}>
-          <p style={{ maxWidth:420, fontFamily:FONT_BODY, fontSize:15, lineHeight:1.7, color:'rgba(240,237,232,0.6)' }}>
-            <strong style={{ color:COLOR.text }}>{site.role}</strong> with {site.stats[0].num} crafting digital products across fintech, insurance, media & real estate.{' '}
-            <strong style={{ color:COLOR.text }}>I turn complex problems into clear, elegant experiences.</strong>
-          </p>
-          <div style={{ display:'flex', gap:48 }}>
-            {site.stats.map((s: any) => (
-              <div key={s.label} style={{ textAlign:'right' }}>
-                <div style={{ fontFamily:FONT_DISPLAY, fontSize:52, lineHeight:1, color:COLOR.white }}>
-                  {s.num.replace('+','')}<span style={{ color:COLOR.accent }}>+</span>
-                </div>
-                <div style={{ fontFamily:FONT_MONO, fontSize:10, letterSpacing:'0.15em', color:COLOR.muted, textTransform:'uppercase', marginTop:4 }}>{s.label}</div>
+        <div className="hero-content">
+          <h1 className="hero-h1">Senior UX Designer<br/>based in Bangalore</h1>
+          <p className="hero-sub">11+ years designing digital products across fintech,<br/>insurance, media and real estate.</p>
+          <div className="hero-btns">
+            <a href="#work" className="btn-outline-white">VIEW WORK</a>
+            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="btn-yellow">
+              GET IN TOUCH
+              <div className="btn-yellow-arrow">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#d4f53c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
-            ))}
+            </a>
           </div>
         </div>
 
-        <div className="animate-fade-up animate-delay-4" style={{ position:'absolute', bottom:32, left:'50%', transform:'translateX(-50%)', display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
-          <span style={{ fontFamily:FONT_MONO, fontSize:10, letterSpacing:'0.2em', color:COLOR.muted, textTransform:'uppercase' }}>Scroll</span>
-          <div style={{ width:1, height:48, background:'linear-gradient(to bottom, #ff3c00, transparent)', animation:'scrollPulse 2s ease-in-out infinite' }} />
+        {/* CAROUSEL */}
+        <div className="carousel-wrap">
+          <div className="carousel-track">
+            {/* Set 1 */}
+            <div className="c-card"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">Rely Platform</div><div className="c-dot" style={{background:'#22c55e'}}></div></div><div className="c-card-big">5</div><div className="c-card-label">User personas</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'85%'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">Research</span><span className="c-row-r">Done ✓</span></div><div className="c-row"><span className="c-row-l">IA & Flows</span><span className="c-row-r">Done ✓</span></div></div></div></div>
+            <div className="c-card dark"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">Partner Portal</div><div className="c-dot" style={{background:'#2196f3'}}></div></div><div className="c-card-big">7</div><div className="c-card-label">Modules shipped</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'100%',background:'#2196f3'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">Dashboard</span><span className="c-row-r">Live</span></div><div className="c-row"><span className="c-row-l">Claims</span><span className="c-row-r">Live</span></div></div></div></div>
+            <div className="c-card"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">Editorji</div><div className="c-dot" style={{background:'#ef4444'}}></div></div><div className="c-card-big">2M+</div><div className="c-card-label">Monthly users</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'72%',background:'#ef4444'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">iOS App</span><span className="c-row-r">✓</span></div><div className="c-row"><span className="c-row-l">PWA</span><span className="c-row-r">✓</span></div></div></div></div>
+            <div className="c-card dark"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">Experience</div><div className="c-dot" style={{background:'#d4f53c'}}></div></div><div className="c-card-big">11+</div><div className="c-card-label">Years designing</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'90%'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">Industries</span><span className="c-row-r">8+</span></div><div className="c-row"><span className="c-row-l">Projects</span><span className="c-row-r">20+</span></div></div></div></div>
+            <div className="c-card"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">AI Projects</div><div className="c-dot" style={{background:'#a855f7'}}></div></div><div className="c-card-big">∞</div><div className="c-card-label">Experiments</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'60%',background:'#a855f7'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">Finance App</span><span className="c-row-r">Live</span></div><div className="c-row"><span className="c-row-l">Portfolio</span><span className="c-row-r">Live</span></div></div></div></div>
+            {/* Set 2 — duplicate for infinite loop */}
+            <div className="c-card"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">Rely Platform</div><div className="c-dot" style={{background:'#22c55e'}}></div></div><div className="c-card-big">5</div><div className="c-card-label">User personas</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'85%'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">Research</span><span className="c-row-r">Done ✓</span></div></div></div></div>
+            <div className="c-card dark"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">Partner Portal</div><div className="c-dot" style={{background:'#2196f3'}}></div></div><div className="c-card-big">7</div><div className="c-card-label">Modules shipped</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'100%',background:'#2196f3'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">Dashboard</span><span className="c-row-r">Live</span></div></div></div></div>
+            <div className="c-card"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">Editorji</div><div className="c-dot" style={{background:'#ef4444'}}></div></div><div className="c-card-big">2M+</div><div className="c-card-label">Monthly users</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'72%',background:'#ef4444'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">iOS App</span><span className="c-row-r">✓</span></div></div></div></div>
+            <div className="c-card dark"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">Experience</div><div className="c-dot" style={{background:'#d4f53c'}}></div></div><div className="c-card-big">11+</div><div className="c-card-label">Years designing</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'90%'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">Industries</span><span className="c-row-r">8+</span></div></div></div></div>
+            <div className="c-card"><div className="c-card-inner"><div className="c-card-header"><div className="c-card-name">AI Projects</div><div className="c-dot" style={{background:'#a855f7'}}></div></div><div className="c-card-big">∞</div><div className="c-card-label">Experiments</div><div className="c-bar-bg"><div className="c-bar-fg" style={{width:'60%',background:'#a855f7'}}></div></div><div className="c-rows"><div className="c-row"><span className="c-row-l">Finance App</span><span className="c-row-r">Live</span></div></div></div></div>
+          </div>
         </div>
       </section>
-
-      {/* MARQUEE */}
-      <div style={{ borderTop:`1px solid ${COLOR.border}`, borderBottom:`1px solid ${COLOR.border}`, padding:'18px 0', overflow:'hidden' }}>
-        <div className="marquee-track">
-          {[...site.marquee, ...site.marquee].map((item: string, i: number) => (
-            <div key={i} style={{ display:'flex', alignItems:'center', gap:32, padding:'0 32px', fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.2em', color:COLOR.muted, textTransform:'uppercase', whiteSpace:'nowrap' }}>
-              <span style={{ width:4, height:4, borderRadius:'50%', background:COLOR.accent, flexShrink:0, display:'inline-block' }} />
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* WORK */}
-      <section style={{ padding:'80px 48px 120px' }} id="work">
-        <div className="reveal" style={STYLES.sectionLabel}>
-          <span style={STYLES.accentLine} />Selected Work
+      <section id="work">
+        <div className="work-heading reveal">
+          <div className="work-eyebrow">CASE STUDIES</div>
+          <h2 className="work-h2">Selected work</h2>
+          <p className="work-sub">End-to-end UX design across research, systems and interfaces.</p>
         </div>
-        <div className="reveal" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:80 }}>
-          <h2 style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(56px, 8vw, 120px)', lineHeight:0.9, color:COLOR.white }}>
-            CASE<br /><span style={{ WebkitTextStroke:'1px rgba(255,255,255,0.15)', color:'transparent' }}>STUDIES</span>
-          </h2>
-          <Link href="/work" style={{ fontFamily:FONT_MONO, fontSize:12, letterSpacing:'0.12em', color:COLOR.muted, border:`1px solid ${COLOR.border}`, padding:'12px 24px', textDecoration:'none', textTransform:'uppercase', transition:'all 0.3s' }}
-            onMouseEnter={e => { e.currentTarget.style.color=COLOR.accent; e.currentTarget.style.borderColor=COLOR.accent }}
-            onMouseLeave={e => { e.currentTarget.style.color=COLOR.muted; e.currentTarget.style.borderColor=COLOR.border }}>
-            View All →
-          </Link>
-        </div>
+        <div className="work-grid">
 
-        <div style={{ display:'flex', flexDirection:'column', gap:2 }}>
-          {works.map((work, i) => (
-            <Link key={work.slug} href={`/work/${work.slug}`}
-              className={`reveal reveal-delay-${Math.min(i,3)}`}
-              style={{ display:'grid', gridTemplateColumns:'1fr 400px', gap:48, alignItems:'center', padding:48, background:COLOR.surface, border:`1px solid ${COLOR.border}`, textDecoration:'none', color:'inherit', position:'relative', overflow:'hidden', transition:'border-color 0.3s' }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor='rgba(255,60,0,0.35)')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor=COLOR.border)}>
-              <div style={{ position:'relative', zIndex:1 }}>
-                <div style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.2em', color:COLOR.muted, marginBottom:20 }}>
-                  {String(i+1).padStart(2,'0')} / {String(works.length).padStart(2,'0')}
-                </div>
-                <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginBottom:20 }}>
-                  {work.is_new && <span style={STYLES.tagAccent}>New</span>}
-                  {work.tags.slice(0,3).map(t => <span key={t} style={STYLES.tag}>{t}</span>)}
-                </div>
-                <h3 style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(40px, 4vw, 72px)', lineHeight:1, color:COLOR.white, letterSpacing:'0.02em', marginBottom:16 }}>
-                  {work.title}
-                </h3>
-                <p style={{ fontFamily:FONT_BODY, fontSize:14, lineHeight:1.7, color:'rgba(240,237,232,0.55)', maxWidth:380 }}>
-                  {work.summary}
-                </p>
+          <Link className="work-card reveal d1" href="/work/rely">
+            <div className="work-card-visual">
+              <div style={{position:'absolute', left:'calc(50% - 140px)', top:30, transform:'rotate(6deg)', zIndex:1}} className="wc-mock-back">
+                <div className="wc-mock-title">IA Map</div>
+                <div style={{fontSize:11, color:'rgba(255,255,255,0.5)', lineHeight:1.5}}>Information<br/>Architecture</div>
               </div>
-              <div style={{ height:280, background:VISUAL_BG[work.visual] || COLOR.bg2, border:`1px solid ${COLOR.border}`, position:'relative', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                <div style={{ position:'absolute', inset:0, backgroundImage:'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)', backgroundSize:'40px 40px' }} />
-                {work.visual === 'rely' && <div style={{ position:'absolute', width:160, height:160, border:'1px solid rgba(255,60,0,0.2)', borderRadius:'50%', animation:'pulseRing 3s ease-in-out infinite' }} />}
-                <div style={{ fontFamily:FONT_DISPLAY, fontSize:96, color:'rgba(255,60,0,0.1)', letterSpacing:'0.1em', position:'relative', zIndex:1 }}>
-                  {work.title.slice(0,2).toUpperCase()}
-                </div>
+              <div className="wc-mock">
+                <div className="wc-mock-title">Rely Platform</div>
+                <div className="wc-mock-big">5</div>
+                <div className="wc-mock-label">User personas</div>
+                <div className="wc-mock-bar-bg"><div className="wc-mock-bar-fg" style={{width:'85%'}}></div></div>
+                <div className="wc-mock-row"><span className="wc-mock-row-l">Research</span><span className="wc-mock-row-r">Done ✓</span></div>
+                <div className="wc-mock-row"><span className="wc-mock-row-l">IA & Flows</span><span className="wc-mock-row-r">Done ✓</span></div>
               </div>
-              <div style={{ position:'absolute', right:48, top:48, width:40, height:40, border:`1px solid ${COLOR.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, color:COLOR.text, transition:'all 0.3s' }}>↗</div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ABOUT */}
-      <section style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'7.5rem', padding:'7.5rem 48px', borderTop:`1px solid ${COLOR.border}` }} id="about">
-        <div style={{ position:'sticky', top:'7.5rem', alignSelf:'start' }}>
-          <div className="reveal" style={STYLES.sectionLabel}><span style={STYLES.accentLine}/>About</div>
-          <h2 className="reveal" style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(64px, 8vw, 120px)', lineHeight:0.9, color:COLOR.white }}>
-            THE<br />DESIGN<br /><span style={{ WebkitTextStroke:'1px rgba(255,255,255,0.12)', color:'transparent' }}>MIND</span>
-          </h2>
-          <p className="reveal" style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.2em', color:COLOR.muted, textTransform:'uppercase', marginTop:32 }}>
-            {site.location}<br />Available globally
-          </p>
-        </div>
-        <div style={{ paddingTop:4 }}>
-          {site.bio.map((p: string, i: number) => (
-            <p key={i} className={`reveal reveal-delay-${i+1}`} style={{ fontFamily:FONT_BODY, fontSize:17, lineHeight:1.75, color:'rgba(240,237,232,0.68)', marginBottom:32 }}>{p}</p>
-          ))}
-          <div className="reveal reveal-delay-3" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:2, marginTop:48 }}>
-            {site.skills.map((skill: string) => (
-              <div key={skill} style={{ display:'flex', alignItems:'center', gap:12, padding:'20px 24px', background:COLOR.surface, border:`1px solid ${COLOR.border}`, transition:'border-color 0.3s' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor='rgba(255,60,0,0.2)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor=COLOR.border)}>
-                <span style={{ width:6, height:6, borderRadius:'50%', background:COLOR.accent, flexShrink:0, display:'inline-block' }} />
-                <span style={{ fontFamily:FONT_MONO, fontSize:12, letterSpacing:'0.1em', color:COLOR.muted, textTransform:'uppercase' }}>{skill}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* EXPERIENCE */}
-      <section style={{ padding:'7.5rem 48px', borderTop:`1px solid ${COLOR.border}` }} id="experience">
-        <div className="reveal" style={STYLES.sectionLabel}><span style={STYLES.accentLine}/>Experience</div>
-        {site.experience.map((exp: any, i: number) => (
-          <div key={i} className={`reveal reveal-delay-${Math.min(i,3)}`}
-            style={{ display:'grid', gridTemplateColumns:'200px 1fr 160px', gap:48, padding:'40px 0', borderBottom:`1px solid ${COLOR.border}`, transition:'background 0.3s' }}
-            onMouseEnter={e => (e.currentTarget.style.background='rgba(255,255,255,0.01)')}
-            onMouseLeave={e => (e.currentTarget.style.background='transparent')}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.12em', color:COLOR.muted, textTransform:'uppercase', paddingTop:4 }}>{exp.period}</div>
-            <div>
-              <div style={{ fontFamily:FONT_BODY, fontSize:20, fontWeight:700, color:COLOR.text, marginBottom:6 }}>{exp.role}</div>
-              <div style={{ fontFamily:FONT_MONO, fontSize:12, color:COLOR.accent, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:12 }}>{exp.company}</div>
-              <div style={{ fontFamily:FONT_BODY, fontSize:14, color:'rgba(240,237,232,0.5)', lineHeight:1.6 }}>{exp.description}</div>
             </div>
-            <div style={{ fontFamily:FONT_MONO, fontSize:10, letterSpacing:'0.15em', color:COLOR.muted, textTransform:'uppercase', textAlign:'right', paddingTop:6 }}>{exp.type}</div>
-          </div>
-        ))}
-      </section>
+            <div className="work-card-info">
+              <div className="work-card-title">Rely — Rental Platform</div>
+              <div className="work-card-desc">A one-stop solution for renters and landlords to search, connect and apply for long-term rentals in the Bay Area.</div>
+            </div>
+          </Link>
 
-      {/* CTA */}
-      <section style={{ padding:'160px 48px', borderTop:`1px solid ${COLOR.border}`, textAlign:'center', position:'relative', overflow:'hidden' }} id="contact">
-        <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', pointerEvents:'none' }}>
-          <span style={{ fontFamily:FONT_DISPLAY, fontSize:'min(280px, 20vw)', color:'rgba(255,60,0,0.03)', letterSpacing:'0.1em', whiteSpace:'nowrap' }}>HIRE ME</span>
-        </div>
-        <div className="reveal" style={{ ...STYLES.sectionLabel, justifyContent:'center' }}><span style={STYLES.accentLine}/>Let's work together<span style={STYLES.accentLine}/></div>
-        <h2 className="reveal" style={{ fontFamily:FONT_DISPLAY, fontSize:'clamp(56px, 10vw, 160px)', lineHeight:0.9, color:COLOR.white, marginBottom:48 }}>
-          LET'S<br /><span style={{ WebkitTextStroke:'1px rgba(255,255,255,0.15)', color:'transparent' }}>TALK</span>
-        </h2>
-        <a href={`mailto:${site.email}`} className="reveal"
-          style={{ display:'inline-flex', alignItems:'center', gap:16, fontFamily:FONT_MONO, fontSize:14, letterSpacing:'0.1em', color:COLOR.text, textDecoration:'none', border:`1px solid ${COLOR.border}`, padding:'20px 40px', transition:'all 0.3s' }}
-          onMouseEnter={e => { e.currentTarget.style.background=COLOR.accent; e.currentTarget.style.borderColor=COLOR.accent; e.currentTarget.style.color='#fff' }}
-          onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor=COLOR.border; e.currentTarget.style.color=COLOR.text }}>
-          <span>→</span> {site.email}
-        </a>
-        <div className="reveal" style={{ display:'flex', justifyContent:'center', gap:32, marginTop:40 }}>
-          {Object.entries(site.social).map(([key, url]) => (
-            <a key={key} href={url as string} target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.15em', color:COLOR.muted, textDecoration:'none', textTransform:'uppercase', transition:'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color=COLOR.accent)}
-              onMouseLeave={e => (e.currentTarget.style.color=COLOR.muted)}>
-              {key.charAt(0).toUpperCase()+key.slice(1)}
-            </a>
-          ))}
+          <Link className="work-card reveal d2" href="/work/partner-portal">
+            <div className="work-card-visual">
+              <div style={{position:'absolute', left:'calc(50% - 170px)', top:25, transform:'rotate(-5deg)', zIndex:1}} className="wc-mock-back">
+                <div className="wc-mock-title">Commission</div>
+                <div className="wc-mock-big" style={{fontSize:22}}>₹42k</div>
+                <div className="wc-mock-label">This month</div>
+              </div>
+              <div className="wc-mock">
+                <div className="wc-mock-title">Partner Portal</div>
+                <div className="wc-mock-big">7</div>
+                <div className="wc-mock-label">Modules shipped</div>
+                <div className="wc-mock-bar-bg"><div className="wc-mock-bar-fg" style={{width:'100%', background:'#22c55e'}}></div></div>
+                <div className="wc-mock-row"><span className="wc-mock-row-l">Dashboard</span><span className="wc-mock-row-r">✓</span></div>
+                <div className="wc-mock-row"><span className="wc-mock-row-l">Claims</span><span className="wc-mock-row-r">✓</span></div>
+              </div>
+            </div>
+            <div className="work-card-info">
+              <div className="work-card-title">Partner Portal</div>
+              <div className="work-card-desc">A unified web platform for insurance agents and bank branches managing proposals, renewals, claims and commissions.</div>
+            </div>
+          </Link>
+
+          <Link className="work-card reveal d3" href="/work/editorji">
+            <div className="work-card-visual">
+              <div style={{position:'absolute', right:'calc(50% - 150px)', top:30, transform:'rotate(4deg)', zIndex:1}} className="wc-mock-back">
+                <div className="wc-mock-title">PWA</div>
+                <div style={{fontSize:11, color:'rgba(255,255,255,0.5)', lineHeight:1.5}}>Mobile First<br/>Experience</div>
+              </div>
+              <div className="wc-mock">
+                <div className="wc-mock-title">Editorji</div>
+                <div className="wc-mock-big">2M+</div>
+                <div className="wc-mock-label">Monthly users</div>
+                <div className="wc-mock-bar-bg"><div className="wc-mock-bar-fg" style={{width:'72%', background:'#ef4444'}}></div></div>
+                <div className="wc-mock-row"><span className="wc-mock-row-l">iOS App</span><span className="wc-mock-row-r">✓</span></div>
+                <div className="wc-mock-row"><span className="wc-mock-row-l">PWA</span><span className="wc-mock-row-r">✓</span></div>
+              </div>
+            </div>
+            <div className="work-card-info">
+              <div className="work-card-title">Editorji</div>
+              <div className="work-card-desc">A news aggregation platform with personalised feeds, available as a mobile app and progressive web app.</div>
+            </div>
+          </Link>
+
+          <Link className="work-card reveal d4" href="/ai-projects">
+            <div className="work-card-visual">
+              <div style={{position:'absolute', left:'calc(50% - 160px)', top:25, transform:'rotate(-4deg)', zIndex:1}} className="wc-mock-back">
+                <div className="wc-mock-title">Vibe Coding</div>
+                <div style={{fontSize:11, color:'rgba(255,255,255,0.5)', lineHeight:1.5}}>Built with AI</div>
+              </div>
+              <div className="wc-mock">
+                <div className="wc-mock-title">AI Projects</div>
+                <div className="wc-mock-big">∞</div>
+                <div className="wc-mock-label">Experiments</div>
+                <div className="wc-mock-bar-bg"><div className="wc-mock-bar-fg" style={{width:'60%', background:'#a855f7'}}></div></div>
+                <div className="wc-mock-row"><span className="wc-mock-row-l">Finance App</span><span className="wc-mock-row-r">Live</span></div>
+                <div className="wc-mock-row"><span className="wc-mock-row-l">Portfolio CMS</span><span className="wc-mock-row-r">Live</span></div>
+              </div>
+            </div>
+            <div className="work-card-info">
+              <div className="work-card-title">AI Projects</div>
+              <div className="work-card-desc">Side projects built with AI tools — dashboards, apps and experiments at the intersection of design and code.</div>
+            </div>
+          </Link>
+
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'32px 48px', borderTop:`1px solid ${COLOR.border}` }}>
-        <p style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.12em', color:COLOR.muted, textTransform:'uppercase' }}>© 2025 <span style={{ color:COLOR.accent }}>{site.name}</span></p>
-        <p style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.12em', color:COLOR.muted, textTransform:'uppercase' }}>{site.location} — Available globally</p>
-        <p style={{ fontFamily:FONT_MONO, fontSize:11, letterSpacing:'0.12em', color:COLOR.muted, textTransform:'uppercase' }}>Designed with <span style={{ color:COLOR.accent }}>intention</span></p>
+      <footer id="contact">
+        <div className="footer-card">
+          <div className="cta-blob cta-blob-1"></div>
+          <div className="cta-blob cta-blob-2"></div>
+          <div className="footer-cta">
+            <div className="footer-eyebrow">GET IN TOUCH</div>
+            <h2 className="footer-h2">Let&apos;s build<br/>something great.</h2>
+            <p className="footer-sub">Open to full-time roles, freelance projects, and interesting conversations.</p>
+            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="btn-cta-yellow">
+              GET IN TOUCH
+              <div className="btn-yellow-arrow">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#d4f53c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+            </a>
+          </div>
+          <div className="footer-right-col">
+            <div className="footer-pages">
+              <div className="footer-col-title">PAGES</div>
+              <Link href="/" className="footer-link">Home</Link>
+              <Link href="/about" className="footer-link">About</Link>
+              <a href="https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing" target="_blank" className="footer-link">Resume</a>
+              <a href="#work" className="footer-link">Work</a>
+            </div>
+            <div className="footer-socials-row">
+              <a href="https://www.linkedin.com/in/rajatbhand/" target="_blank" className="footer-social-icon" title="LinkedIn"><i className="fa-brands fa-linkedin-in"></i></a>
+              <a href="https://www.behance.net/bhandrajat" target="_blank" className="footer-social-icon" title="Behance"><i className="fa-brands fa-behance"></i></a>
+              <a href="https://dribbble.com/BhandRajat" target="_blank" className="footer-social-icon" title="Dribbble"><i className="fa-brands fa-dribbble"></i></a>
+              <a href="https://www.instagram.com/bhandrajat.film" target="_blank" className="footer-social-icon" title="Instagram"><i className="fa-brands fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
       </footer>
     </>
   )
