@@ -4,13 +4,13 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 
 const carouselCards = [
-  { name:'Rely Platform', big:'5', label:'User personas', bar:85, barColor:'#d4f53c', rows:[['Research','Done ✓'],['IA & Flows','Done ✓']], dot:'#22c55e', dark:false },
-  { name:'Partner Portal', big:'7', label:'Modules shipped', bar:100, barColor:'#2196f3', rows:[['Dashboard','Live'],['Claims','Live']], dot:'#2196f3', dark:true },
-  { name:'Editorji', big:'2M+', label:'Monthly users', bar:72, barColor:'#ef4444', rows:[['iOS App','✓'],['PWA','✓']], dot:'#ef4444', dark:false },
-  { name:'Experience', big:'11+', label:'Years designing', bar:90, barColor:'#d4f53c', rows:[['Industries','8+'],['Projects','20+']], dot:'#d4f53c', dark:true },
+  { name: 'Rely Platform',  big: '5',   label: 'User personas',    bar: 85,  barColor: '#d4f53c', rows: [['Research', 'Done ✓'], ['IA & Flows', 'Done ✓']], dot: '#22c55e', dark: false },
+  { name: 'Partner Portal', big: '7',   label: 'Modules shipped',  bar: 100, barColor: '#2196f3', rows: [['Dashboard', 'Live'],   ['Claims', 'Live']],       dot: '#2196f3', dark: true  },
+  { name: 'Editorji',       big: '2M+', label: 'Monthly users',    bar: 72,  barColor: '#ef4444', rows: [['iOS App', '✓'],        ['PWA', '✓']],             dot: '#ef4444', dark: false },
+  { name: 'Experience',     big: '11+', label: 'Years designing',  bar: 90,  barColor: '#d4f53c', rows: [['Industries', '8+'],    ['Projects', '20+']],      dot: '#d4f53c', dark: true  },
 ]
 
-export default function HomeClient({ works }: { works: any[], site: any }) {
+export default function HomeClient({ works }: { works: any[] }) {
   useEffect(() => {
     const els = document.querySelectorAll('.reveal')
     const obs = new IntersectionObserver(entries => {
@@ -24,59 +24,82 @@ export default function HomeClient({ works }: { works: any[], site: any }) {
 
   return (
     <>
-      {/* NAV */}
-      <nav className="absolute top-0 left-0 right-0 z-[100] flex items-center justify-between px-4 md:px-[60px] h-[72px]">
-        <Link href="/" className="text-[28px] font-extrabold text-white no-underline tracking-[-0.04em] flex items-center">
-          <span className="text-[22px] font-extrabold text-white/90">®</span>B
+      {/* ─── NAV ─────────────────────────────────────────────────────────────── */}
+      <nav style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 60px', height: 72 }}>
+        <Link href="/" style={{ fontSize: 28, fontWeight: 800, color: '#fff', textDecoration: 'none', letterSpacing: '-0.04em', display: 'flex', alignItems: 'center' }}>
+          <span style={{ fontSize: 22, opacity: 0.9 }}>®</span>B
         </Link>
-        <div className="flex items-center gap-1">
-          <a href="#work" className="text-[13px] font-medium text-white/80 no-underline px-3 md:px-4 py-2 rounded-lg tracking-[0.04em] uppercase hover:bg-white/10 hover:text-white transition-all duration-150">WORK</a>
-          <Link href="/about" className="text-[13px] font-medium text-white/80 no-underline px-3 md:px-4 py-2 rounded-lg tracking-[0.04em] uppercase hover:bg-white/10 hover:text-white transition-all duration-150">ABOUT</Link>
-          <a href="https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing" target="_blank" className="hidden sm:block text-[13px] font-medium text-white/80 no-underline px-3 md:px-4 py-2 rounded-lg tracking-[0.04em] uppercase hover:bg-white/10 hover:text-white transition-all duration-150">RESUME</a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          {[
+            { label: 'WORK', href: '#work', external: false },
+            { label: 'ABOUT', href: '/about', external: false },
+            { label: 'RESUME', href: 'https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing', external: true },
+          ].map(item => (
+            item.external
+              ? <a key={item.label} href={item.href} target="_blank" style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.8)', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, letterSpacing: '0.04em' }}>{item.label}</a>
+              : item.href.startsWith('/')
+                ? <Link key={item.label} href={item.href} style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.8)', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, letterSpacing: '0.04em' }}>{item.label}</Link>
+                : <a key={item.label} href={item.href} style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.8)', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, letterSpacing: '0.04em' }}>{item.label}</a>
+          ))}
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4 md:px-[60px] pt-[100px] pb-[60px] [background:linear-gradient(180deg,#2196f3_0%,#42a5f5_25%,#64b5f6_50%,#90caf9_70%,#bbdefb_85%,#e3f2fd_95%,#f5f9ff_100%)]">
-
-        <div className="relative z-10 text-center max-w-[680px] mb-14">
-          <h1 className="text-[44px] sm:text-[58px] lg:text-[76px] font-extrabold leading-[1.06] tracking-[-0.03em] text-white [text-shadow:0_2px_20px_rgba(0,0,0,0.12)] mb-5">
+      {/* ─── HERO ────────────────────────────────────────────────────────────── */}
+      <section style={{
+        minHeight: '100vh',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '100px 60px 60px',
+        background: 'linear-gradient(180deg,#2196f3 0%,#42a5f5 25%,#64b5f6 50%,#90caf9 70%,#bbdefb 85%,#e3f2fd 95%,#f5f9ff 100%)',
+      }}>
+        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: 680, marginBottom: 56 }}>
+          <h1 style={{ fontSize: 'clamp(44px, 7vw, 76px)', fontWeight: 800, lineHeight: 1.06, letterSpacing: '-0.03em', color: '#fff', textShadow: '0 2px 20px rgba(0,0,0,0.12)', marginBottom: 20 }}>
             Senior UX Designer<br />based in Bangalore
           </h1>
-          <p className="text-base font-normal leading-[1.65] text-white/80 mb-9">
-            11+ years designing digital products across fintech,<br className="hidden sm:block" />
+          <p style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.65, color: 'rgba(255,255,255,0.8)', marginBottom: 36 }}>
+            11+ years designing digital products across fintech,<br />
             insurance, media and real estate.
           </p>
-          <div className="flex gap-3 items-center justify-center flex-wrap">
-            <a href="#work" className="text-[13px] font-semibold text-white/90 bg-white/10 border border-white/30 backdrop-blur-sm px-6 py-3 rounded-full no-underline tracking-[0.04em] uppercase hover:bg-white/20 transition-colors">VIEW WORK</a>
-            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="text-[13px] font-bold text-[#0a0a0a] bg-[#d4f53c] px-6 py-3 rounded-full no-underline tracking-[0.04em] uppercase inline-flex items-center gap-2 hover:opacity-90 transition-opacity [box-shadow:0_4px_20px_rgba(212,245,60,0.35)]">
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href="#work" style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.9)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.3)', padding: '12px 24px', borderRadius: 100, textDecoration: 'none', letterSpacing: '0.04em' }}>VIEW WORK</a>
+            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" style={{ fontSize: 13, fontWeight: 700, color: '#0a0a0a', background: '#d4f53c', padding: '12px 24px', borderRadius: 100, textDecoration: 'none', letterSpacing: '0.04em', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 20px rgba(212,245,60,0.35)' }}>
               GET IN TOUCH
-              <span className="w-[22px] h-[22px] rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
+              <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#d4f53c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </span>
             </a>
           </div>
         </div>
 
-        {/* CAROUSEL */}
-        <div className="relative z-10 w-screen overflow-hidden -mx-4 md:-mx-[60px] py-2 pb-6">
+        {/* Carousel */}
+        <div style={{ position: 'relative', zIndex: 10, width: '100vw', overflow: 'hidden', marginLeft: -60, marginRight: -60, padding: '8px 0 24px' }}>
           <div className="rb-carousel-track">
             {[...carouselCards, ...carouselCards].map((c, i) => (
-              <div key={i} className={`shrink-0 w-[260px] h-[180px] rounded-2xl overflow-hidden border p-4 flex flex-col cursor-pointer transition-transform duration-300 hover:-translate-y-1.5 ${c.dark ? 'bg-[#0a0a0a] border-white/20' : 'bg-white/90 border-white/70'}`} style={{backdropFilter:'blur(20px)',boxShadow:'0 16px 48px rgba(0,0,0,0.18)'}}>
-                <div className="flex justify-between items-center mb-2.5">
-                  <span className={`text-[11px] font-bold tracking-[0.02em] ${c.dark ? 'text-white/50' : 'text-[#0a0a0a]'}`}>{c.name}</span>
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{background:c.dot}}></span>
+              <div key={i} style={{
+                flexShrink: 0, width: 260, height: 180, borderRadius: 16, overflow: 'hidden',
+                border: `1px solid ${c.dark ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.7)'}`,
+                padding: 16, display: 'flex', flexDirection: 'column', cursor: 'pointer',
+                background: c.dark ? '#0a0a0a' : 'rgba(255,255,255,0.92)',
+                backdropFilter: 'blur(20px)', boxShadow: '0 16px 48px rgba(0,0,0,0.18)',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.02em', color: c.dark ? 'rgba(255,255,255,0.5)' : '#0a0a0a' }}>{c.name}</span>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: c.dot, flexShrink: 0 }} />
                 </div>
-                <div className={`text-[30px] font-extrabold tracking-[-0.03em] leading-none ${c.dark ? 'text-white' : 'text-[#0a0a0a]'}`}>{c.big}</div>
-                <div className={`text-[10px] font-medium mt-1 ${c.dark ? 'text-white/35' : 'text-[#888]'}`}>{c.label}</div>
-                <div className={`h-[3px] rounded-full my-2.5 ${c.dark ? 'bg-white/10' : 'bg-[#e5e5e5]'}`}>
-                  <div className="h-full rounded-full" style={{width:`${c.bar}%`,background:c.barColor}}></div>
+                <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1, color: c.dark ? '#fff' : '#0a0a0a' }}>{c.big}</div>
+                <div style={{ fontSize: 10, fontWeight: 500, marginTop: 4, color: c.dark ? 'rgba(255,255,255,0.35)' : '#888' }}>{c.label}</div>
+                <div style={{ height: 3, borderRadius: 9999, margin: '10px 0', background: c.dark ? 'rgba(255,255,255,0.1)' : '#e5e5e5' }}>
+                  <div style={{ height: '100%', borderRadius: 9999, width: `${c.bar}%`, background: c.barColor }} />
                 </div>
-                <div className="flex flex-col gap-1">
-                  {c.rows.map(([l,r],j) => (
-                    <div key={j} className={`flex justify-between items-center rounded-md px-2 py-1 ${c.dark ? 'bg-white/[0.06]' : 'bg-[#f5f5f7]'}`}>
-                      <span className={`text-[9px] font-medium ${c.dark ? 'text-white/40' : 'text-[#555]'}`}>{l}</span>
-                      <span className={`text-[9px] font-bold ${c.dark ? 'text-[#d4f53c]' : 'text-[#0a0a0a]'}`}>{r}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {c.rows.map(([l, r], j) => (
+                    <div key={j} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 6, padding: '4px 8px', background: c.dark ? 'rgba(255,255,255,0.06)' : '#f5f5f7' }}>
+                      <span style={{ fontSize: 9, fontWeight: 500, color: c.dark ? 'rgba(255,255,255,0.4)' : '#555' }}>{l}</span>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: c.dark ? '#d4f53c' : '#0a0a0a' }}>{r}</span>
                     </div>
                   ))}
                 </div>
@@ -86,86 +109,114 @@ export default function HomeClient({ works }: { works: any[], site: any }) {
         </div>
       </section>
 
-      {/* CASE STUDIES */}
-      <section id="work" className="bg-white py-16 md:py-[100px] px-4 md:px-[60px]">
-        <div className="text-center mb-14 reveal">
-          <div className="text-[12px] font-semibold text-[#888] tracking-[0.14em] uppercase mb-3.5 flex items-center justify-center gap-2 before:content-['•'] before:text-[#0a0a0a]">CASE STUDIES</div>
-          <h2 className="text-[34px] md:text-[56px] font-extrabold tracking-[-0.035em] text-[#0a0a0a] leading-[1.06] mb-3.5">Selected work</h2>
-          <p className="text-[15px] text-[#888] leading-[1.7] max-w-[460px] mx-auto font-normal">End-to-end UX design across research, systems and interfaces.</p>
+      {/* ─── CASE STUDIES ────────────────────────────────────────────────────── */}
+      <section id="work" style={{ background: '#fff', padding: '100px 60px' }}>
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: '#888', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <span style={{ color: '#0a0a0a' }}>•</span> CASE STUDIES
+          </div>
+          <h2 style={{ fontSize: 'clamp(34px, 5vw, 56px)', fontWeight: 800, letterSpacing: '-0.035em', color: '#0a0a0a', lineHeight: 1.06, marginBottom: 14 }}>Selected work</h2>
+          <p style={{ fontSize: 15, color: '#888', lineHeight: 1.7, maxWidth: 460, margin: '0 auto' }}>End-to-end UX design across research, systems and interfaces.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[1100px] mx-auto p-4 rounded-[20px] bg-[#f5f5f7]">
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, maxWidth: 1100, margin: '0 auto', padding: 16, borderRadius: 20, background: '#f5f5f7' }}>
           {caseStudies.map((work, i) => (
-            <Link key={work.slug} className={`reveal d${Math.min(i+1,4)} bg-white border border-[#e8e8e8] rounded-[20px] overflow-hidden no-underline text-inherit flex flex-col transition-all duration-300 hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] hover:-translate-y-1`} href={`/work/${work.slug}`}>
-              <div className="min-h-[260px] bg-white relative flex items-center justify-center p-8 overflow-hidden">
-                <div className="bg-[#111] rounded-[14px] shadow-[0_16px_48px_rgba(0,0,0,0.2)] p-4 w-[200px] relative z-[2]">
-                  <div className="text-[9px] font-bold text-white/40 tracking-[0.06em] uppercase mb-2">{work.title}</div>
-                  <div className="text-[28px] font-extrabold text-white tracking-[-0.03em] leading-none">{work.year}</div>
-                  <div className="text-[9px] text-white/35 mt-0.5">{work.role}</div>
-                  <div className="h-[3px] bg-white/10 rounded-full my-2.5"><div className="h-full rounded-full bg-[#d4f53c] w-4/5"></div></div>
-                  {work.tags?.slice(0,2).map((t:string) => (
-                    <div key={t} className="flex justify-between px-2 py-1 bg-white/5 rounded-md mt-1">
-                      <span className="text-[8px] text-white/40">{t}</span>
-                      <span className="text-[8px] text-[#d4f53c] font-bold">✓</span>
+            <Link key={work.slug} href={`/work/${work.slug}`} className={`reveal d${Math.min(i + 1, 4)}`} style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 20, overflow: 'hidden', textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', transition: 'box-shadow 0.3s, transform 0.3s' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 60px rgba(0,0,0,0.1)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = 'none'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)' }}>
+              {/* Visual area */}
+              <div style={{ minHeight: 260, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, overflow: 'hidden' }}>
+                <div style={{ background: '#111', borderRadius: 14, boxShadow: '0 16px 48px rgba(0,0,0,0.2)', padding: 16, width: 200 }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>{work.title}</div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1 }}>{work.year}</div>
+                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{work.role}</div>
+                  <div style={{ height: 3, background: 'rgba(255,255,255,0.1)', borderRadius: 9999, margin: '10px 0' }}>
+                    <div style={{ height: '100%', borderRadius: 9999, background: '#d4f53c', width: '80%' }} />
+                  </div>
+                  {work.tags?.slice(0, 2).map((t: string) => (
+                    <div key={t} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: 6, marginTop: 4 }}>
+                      <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)' }}>{t}</span>
+                      <span style={{ fontSize: 8, color: '#d4f53c', fontWeight: 700 }}>✓</span>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="px-8 pt-7 pb-8 border-t border-[#ebebeb] text-center">
-                <div className="text-[22px] font-bold text-[#0a0a0a] tracking-[-0.02em] mb-2.5 leading-[1.2]">{work.title}</div>
-                <div className="text-[14px] text-[#888] leading-[1.65] font-normal max-w-[360px] mx-auto">{work.summary}</div>
+              {/* Text area */}
+              <div style={{ padding: '28px 32px 32px', borderTop: '1px solid #ebebeb', textAlign: 'center' }}>
+                <div style={{ fontSize: 22, fontWeight: 700, color: '#0a0a0a', letterSpacing: '-0.02em', marginBottom: 10, lineHeight: 1.2 }}>{work.title}</div>
+                <div style={{ fontSize: 14, color: '#888', lineHeight: 1.65, maxWidth: 360, margin: '0 auto' }}>{work.summary}</div>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* FAMILY & FRIENDS */}
-      <section className="bg-white py-16 md:py-[100px] px-4 md:px-[60px] border-t border-[#ebebeb]">
-        <div className="text-center mb-14 reveal">
-          <div className="text-[12px] font-semibold text-[#888] tracking-[0.14em] uppercase mb-3.5 flex items-center justify-center gap-2 before:content-['•'] before:text-[#0a0a0a]">SIDE PROJECTS</div>
-          <h2 className="text-[34px] md:text-[56px] font-extrabold tracking-[-0.035em] text-[#0a0a0a] leading-[1.06] mb-3.5">Family &amp; Friends</h2>
-          <p className="text-[15px] text-[#888] leading-[1.7] max-w-[460px] mx-auto font-normal">Vibe coding experiments built for the people around me.</p>
+      {/* ─── FAMILY & FRIENDS ────────────────────────────────────────────────── */}
+      <section style={{ background: '#fff', padding: '100px 60px', borderTop: '1px solid #ebebeb' }}>
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: '#888', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <span style={{ color: '#0a0a0a' }}>•</span> SIDE PROJECTS
+          </div>
+          <h2 style={{ fontSize: 'clamp(34px, 5vw, 56px)', fontWeight: 800, letterSpacing: '-0.035em', color: '#0a0a0a', lineHeight: 1.06, marginBottom: 14 }}>Family &amp; Friends</h2>
+          <p style={{ fontSize: 15, color: '#888', lineHeight: 1.7, maxWidth: 460, margin: '0 auto' }}>Vibe coding experiments built for the people around me.</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-[1100px] mx-auto reveal d1">
-          <a href="/ai-projects" className="bg-[#f5f5f7] border border-[#e8e8e8] rounded-[20px] p-8 no-underline text-inherit flex flex-col gap-3 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:-translate-y-0.5">
-            <div className="text-[32px]">⚡</div>
-            <div className="text-[18px] font-bold text-[#0a0a0a] tracking-[-0.02em]">AI Projects</div>
-            <div className="text-[14px] text-[#888] leading-[1.65]">Dashboards, apps and tools built with AI — real projects for real people.</div>
+        <div className="reveal d1" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, maxWidth: 1100, margin: '0 auto' }}>
+          <a href="/ai-projects" style={{ background: '#f5f5f7', border: '1px solid #e8e8e8', borderRadius: 20, padding: 32, textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', gap: 12, transition: 'box-shadow 0.3s, transform 0.3s' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px rgba(0,0,0,0.08)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = 'none'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)' }}>
+            <div style={{ fontSize: 32 }}>⚡</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#0a0a0a', letterSpacing: '-0.02em' }}>AI Projects</div>
+            <div style={{ fontSize: 14, color: '#888', lineHeight: 1.65 }}>Dashboards, apps and tools built with AI — real projects for real people.</div>
           </a>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer id="contact" className="bg-white px-4 md:px-[60px] pt-10 pb-[60px]">
-        <div className="max-w-[1100px] mx-auto bg-[#0e0e0e] rounded-[24px] px-8 md:px-16 py-[60px] grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 relative overflow-hidden min-h-[360px]">
-          <div className="absolute w-[400px] h-[400px] bg-[#2196f3] rounded-full blur-[80px] opacity-20 -top-[150px] -left-[100px] pointer-events-none"></div>
-          <div className="absolute w-[300px] h-[300px] bg-[#d4f53c] rounded-full blur-[80px] opacity-20 -bottom-[100px] -right-[80px] pointer-events-none"></div>
+      {/* ─── FOOTER ──────────────────────────────────────────────────────────── */}
+      <footer id="contact" style={{ background: '#fff', padding: '40px 60px 60px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', background: '#0e0e0e', borderRadius: 24, padding: '60px 64px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, position: 'relative', overflow: 'hidden', minHeight: 360 }}>
+          {/* glow blobs */}
+          <div style={{ position: 'absolute', width: 400, height: 400, background: '#2196f3', borderRadius: '50%', filter: 'blur(80px)', opacity: 0.2, top: -150, left: -100, pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', width: 300, height: 300, background: '#d4f53c', borderRadius: '50%', filter: 'blur(80px)', opacity: 0.2, bottom: -100, right: -80, pointerEvents: 'none' }} />
 
-          <div className="flex flex-col relative z-[1]">
-            <div className="text-[11px] font-semibold text-white/35 tracking-[0.14em] uppercase mb-4">GET IN TOUCH</div>
-            <h2 className="text-[28px] md:text-[44px] font-extrabold text-white tracking-[-0.03em] leading-[1.1] mb-4">Let&apos;s build<br />something great.</h2>
-            <p className="text-[15px] text-white/35 leading-[1.7] font-normal mb-8 max-w-[360px]">Open to full-time roles, freelance projects, and interesting conversations.</p>
-            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="text-[13px] font-bold text-[#0a0a0a] bg-[#d4f53c] px-6 py-3 rounded-full no-underline tracking-[0.04em] uppercase inline-flex items-center gap-2 self-start hover:opacity-90 transition-opacity [box-shadow:0_4px_20px_rgba(212,245,60,0.35)]">
+          {/* Left col */}
+          <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16 }}>GET IN TOUCH</div>
+            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: 16 }}>Let&apos;s build<br />something great.</h2>
+            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.35)', lineHeight: 1.7, marginBottom: 32, maxWidth: 360 }}>Open to full-time roles, freelance projects, and interesting conversations.</p>
+            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" style={{ fontSize: 13, fontWeight: 700, color: '#0a0a0a', background: '#d4f53c', padding: '12px 24px', borderRadius: 100, textDecoration: 'none', letterSpacing: '0.04em', display: 'inline-flex', alignItems: 'center', gap: 8, alignSelf: 'flex-start', boxShadow: '0 4px 20px rgba(212,245,60,0.35)' }}>
               GET IN TOUCH
-              <span className="w-[22px] h-[22px] rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
+              <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#d4f53c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </span>
             </a>
           </div>
 
-          <div className="flex flex-col justify-between pt-1 relative z-[1]">
+          {/* Right col */}
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: 4, position: 'relative', zIndex: 1 }}>
             <div>
-              <div className="text-[11px] font-bold text-white/35 tracking-[0.12em] uppercase mb-4">PAGES</div>
-              <Link href="/" className="block text-[16px] font-normal text-white/55 no-underline mb-3 hover:text-white transition-colors">Home</Link>
-              <Link href="/about" className="block text-[16px] font-normal text-white/55 no-underline mb-3 hover:text-white transition-colors">About</Link>
-              <a href="https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing" target="_blank" className="block text-[16px] font-normal text-white/55 no-underline mb-3 hover:text-white transition-colors">Resume</a>
-              <a href="#work" className="block text-[16px] font-normal text-white/55 no-underline mb-3 hover:text-white transition-colors">Work</a>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>PAGES</div>
+              {[
+                { label: 'Home', href: '/' },
+                { label: 'About', href: '/about' },
+                { label: 'Resume', href: 'https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing', external: true },
+                { label: 'Work', href: '#work' },
+              ].map(item => (
+                item.href.startsWith('/') && !item.external
+                  ? <Link key={item.label} href={item.href} style={{ display: 'block', fontSize: 16, color: 'rgba(255,255,255,0.55)', textDecoration: 'none', marginBottom: 12 }}>{item.label}</Link>
+                  : <a key={item.label} href={item.href} target={item.external ? '_blank' : undefined} style={{ display: 'block', fontSize: 16, color: 'rgba(255,255,255,0.55)', textDecoration: 'none', marginBottom: 12 }}>{item.label}</a>
+              ))}
             </div>
-            <div className="flex gap-2.5 items-center mt-6 md:mt-0">
-              <a href="https://www.linkedin.com/in/rajatbhand/" target="_blank" className="w-11 h-11 rounded-xl bg-white/[0.07] border border-white/10 flex items-center justify-center text-white/40 no-underline text-base hover:bg-white/[0.14] hover:text-white hover:border-white/[0.22] transition-all" title="LinkedIn"><i className="fa-brands fa-linkedin-in"></i></a>
-              <a href="https://www.behance.net/bhandrajat" target="_blank" className="w-11 h-11 rounded-xl bg-white/[0.07] border border-white/10 flex items-center justify-center text-white/40 no-underline text-base hover:bg-white/[0.14] hover:text-white hover:border-white/[0.22] transition-all" title="Behance"><i className="fa-brands fa-behance"></i></a>
-              <a href="https://dribbble.com/BhandRajat" target="_blank" className="w-11 h-11 rounded-xl bg-white/[0.07] border border-white/10 flex items-center justify-center text-white/40 no-underline text-base hover:bg-white/[0.14] hover:text-white hover:border-white/[0.22] transition-all" title="Dribbble"><i className="fa-brands fa-dribbble"></i></a>
-              <a href="https://www.instagram.com/bhandrajat.film" target="_blank" className="w-11 h-11 rounded-xl bg-white/[0.07] border border-white/10 flex items-center justify-center text-white/40 no-underline text-base hover:bg-white/[0.14] hover:text-white hover:border-white/[0.22] transition-all" title="Instagram"><i className="fa-brands fa-instagram"></i></a>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              {[
+                { href: 'https://www.linkedin.com/in/rajatbhand/', icon: 'fa-brands fa-linkedin-in', title: 'LinkedIn' },
+                { href: 'https://www.behance.net/bhandrajat', icon: 'fa-brands fa-behance', title: 'Behance' },
+                { href: 'https://dribbble.com/BhandRajat', icon: 'fa-brands fa-dribbble', title: 'Dribbble' },
+                { href: 'https://www.instagram.com/bhandrajat.film', icon: 'fa-brands fa-instagram', title: 'Instagram' },
+              ].map(s => (
+                <a key={s.title} href={s.href} target="_blank" title={s.title} style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: 16 }}>
+                  <i className={s.icon}></i>
+                </a>
+              ))}
             </div>
           </div>
         </div>
