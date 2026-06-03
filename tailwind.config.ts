@@ -9,13 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        accent: '#ff3c00',
-        accent2: '#ffcc00',
+        accent: '#d4f53c',
       },
       fontFamily: {
-        display: ['Bebas Neue', 'sans-serif'],
-        body: ['Syne', 'sans-serif'],
-        mono: ['DM Mono', 'monospace'],
+        sans: ['Plus Jakarta Sans', 'sans-serif'],
       },
     },
   },

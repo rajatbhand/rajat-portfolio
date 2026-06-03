@@ -101,4 +101,4 @@ export const STYLES = {
 
 // ─── GOOGLE FONTS URL (used in layout.tsx <link> tag) ─────────────────────────
 export const GOOGLE_FONTS_URL =
-  'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap'
+  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap'
