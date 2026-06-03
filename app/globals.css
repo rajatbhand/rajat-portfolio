@@ -51,23 +51,23 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: #0
 .rb-c-bar-fg { height: 100%; border-radius: 2px; }
 .rb-c-rows { display: flex; flex-direction: column; gap: 4px; }
 .rb-c-row { display: flex; justify-content: space-between; align-items: center; background: #f5f5f7; border-radius: 6px; padding: 4px 8px; }
-.rb-dark .rb-c-row { background: rgba(255,255,255,0.06); }
+.rb-dark .rb-c-row { background: rgba(255, 255, 255, 0.06); }
 .rb-c-row-l { font-size: 9px; color: #555; font-weight: 500; }
 .rb-dark .rb-c-row-l { color: rgba(255,255,255,0.4); }
 .rb-c-row-r { font-size: 9px; color: #0a0a0a; font-weight: 700; }
 .rb-dark .rb-c-row-r { color: #d4f53c; }
 
 /* ── WORK SECTION ── */
-.rb-work { background: #f5f5f7; padding: 100px 60px; }
+.rb-work { background: #ffffff; padding: 100px 60px; }
 .rb-work-heading { text-align: center; margin-bottom: 56px; }
 .rb-work-eyebrow { font-size: 12px; font-weight: 600; color: #888; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .rb-work-eyebrow::before { content: '•'; color: #0a0a0a; }
 .rb-work-h2 { font-size: clamp(34px,4.5vw,56px); font-weight: 800; letter-spacing: -0.035em; color: #0a0a0a; line-height: 1.06; margin-bottom: 14px; }
 .rb-work-sub { font-size: 15px; color: #888; line-height: 1.7; max-width: 460px; margin: 0 auto; font-weight: 400; }
-.rb-work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1100px; margin: 0 auto; }
+.rb-work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1100px; margin: 0 auto; padding: 16px; border-radius: 20px; background-color: #f5f5f7; }
 .rb-work-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 20px; overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: box-shadow 0.3s, transform 0.3s; }
 .rb-work-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,0.1); transform: translateY(-4px); }
-.rb-card-visual { min-height: 260px; background: #f5f5f7; position: relative; display: flex; align-items: center; justify-content: center; padding: 32px; overflow: hidden; }
+.rb-card-visual { min-height: 260px; background: #ffffff; position: relative; display: flex; align-items: center; justify-content: center; padding: 32px; overflow: hidden; }
 .rb-mock { background: #111; border-radius: 14px; box-shadow: 0 16px 48px rgba(0,0,0,0.2); padding: 16px; width: 200px; position: relative; z-index: 2; }
 .rb-mock-title { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
 .rb-mock-big { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1; }
@@ -77,7 +77,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: #0
 .rb-mock-row { display: flex; justify-content: space-between; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-top: 4px; }
 .rb-mock-row-l { font-size: 8px; color: rgba(255,255,255,0.4); }
 .rb-mock-row-r { font-size: 8px; color: #d4f53c; font-weight: 700; }
-.rb-card-info { padding: 28px 32px 32px; border-top: 1px solid #ebebeb; text-align: center; }
+.rb-card-info { padding: 28px 32px 32px; text-align: center; }
 .rb-card-title { font-size: 22px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.02em; margin-bottom: 10px; line-height: 1.2; }
 .rb-card-desc { font-size: 14px; color: #888; line-height: 1.65; font-weight: 400; max-width: 360px; margin: 0 auto; }
 
