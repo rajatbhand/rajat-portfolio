@@ -67,7 +67,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: #0
 .rb-work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1100px; margin: 0 auto; }
 .rb-work-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 20px; overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: box-shadow 0.3s, transform 0.3s; }
 .rb-work-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,0.1); transform: translateY(-4px); }
-.rb-card-visual { min-height: 260px; background: #fff; position: relative; display: flex; align-items: center; justify-content: center; padding: 32px; overflow: hidden; }
+.rb-card-visual { min-height: 260px; background: #f5f5f7; position: relative; display: flex; align-items: center; justify-content: center; padding: 32px; overflow: hidden; }
 .rb-mock { background: #111; border-radius: 14px; box-shadow: 0 16px 48px rgba(0,0,0,0.2); padding: 16px; width: 200px; position: relative; z-index: 2; }
 .rb-mock-title { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
 .rb-mock-big { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1; }
@@ -77,9 +77,9 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: #0
 .rb-mock-row { display: flex; justify-content: space-between; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-top: 4px; }
 .rb-mock-row-l { font-size: 8px; color: rgba(255,255,255,0.4); }
 .rb-mock-row-r { font-size: 8px; color: #d4f53c; font-weight: 700; }
-.rb-card-info { padding: 22px 26px 26px; border-top: 1px solid #f0f0f0; }
-.rb-card-title { font-size: 19px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.02em; margin-bottom: 8px; line-height: 1.2; }
-.rb-card-desc { font-size: 14px; color: #888; line-height: 1.65; font-weight: 400; }
+.rb-card-info { padding: 28px 32px 32px; border-top: 1px solid #ebebeb; text-align: center; }
+.rb-card-title { font-size: 22px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.02em; margin-bottom: 10px; line-height: 1.2; }
+.rb-card-desc { font-size: 14px; color: #888; line-height: 1.65; font-weight: 400; max-width: 360px; margin: 0 auto; }
 
 /* ── FAMILY & FRIENDS ── */
 .rb-faf { background: #fff; padding: 100px 60px; border-top: 1px solid #ebebeb; }
