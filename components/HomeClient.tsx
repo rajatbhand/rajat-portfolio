@@ -30,39 +30,39 @@ export default function HomeClient({ works }: { works: any[] }) {
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
     els.forEach(el => obs.observe(el))
 
-    // Flat-ring carousel — ellipse with large horizontal radius, tiny Z depth
-    // This avoids perspective distortion and card tilting
-    const origin = carouselRef.current
-    if (!origin) return () => obs.disconnect()
+    // Arm-based ring — exact same technique as aeline.framer.website
+    // The whole ring container rotates (rotateY), each arm is fixed inside it,
+    // card sits at the end of each arm (translateZ). rotateX(10deg) = looking from above.
+    const container = carouselRef.current
+    if (!container) return () => obs.disconnect()
 
-    const cards    = Array.from(origin.children) as HTMLElement[]
-    const total    = cards.length
-    const RX       = 440   // horizontal spread (px)
-    const RZ       = 55    // depth — keep tiny so perspective doesn't magnify cards
-    let   deg      = 0
+    const arms  = Array.from(container.children) as HTMLElement[]
+    const total = arms.length
+    let   deg   = 0
 
     const onEnter = () => { pausedRef.current = true }
     const onLeave = () => { pausedRef.current = false }
-    const wrapper = origin.parentElement
+    const wrapper = container.parentElement
     wrapper?.addEventListener('mouseenter', onEnter)
     wrapper?.addEventListener('mouseleave', onLeave)
 
     const tick = (_time: number, deltaTime: number) => {
-      if (!pausedRef.current) deg += deltaTime * 0.008   // ~8 deg/sec, full orbit ~45 s
+      if (!pausedRef.current) deg += deltaTime * 0.008   // ~8 deg/sec
 
-      cards.forEach((card, i) => {
-        const theta    = (deg + (i / total) * 360) * (Math.PI / 180)
-        const x        = Math.sin(theta) * RX
-        const z        = Math.cos(theta) * RZ
-        const progress = (z + RZ) / (2 * RZ)              // 0 = back, 1 = front
-        // subtle scale — most depth cue comes from the CSS perspective naturally
-        const scale    = 0.82 + progress * 0.18
-        // only show front half; fade in from ~60° on each side
-        const opacity  = progress > 0.35 ? Math.min(1, (progress - 0.35) / 0.65) : 0
+      // Rotate the whole ring
+      container.style.transform =
+        `translate(-50%, -50%) perspective(3000px) rotateX(10deg) rotateY(${deg}deg)`
 
-        card.style.transform = `translateX(${x}px) translateZ(${z}px) scale(${scale})`
-        card.style.opacity   = String(opacity)
-        card.style.zIndex    = String(Math.round(z + RZ + 10))
+      // Fade out arms that are at the back of the ring
+      arms.forEach((arm, i) => {
+        const armAngle  = (i / total) * 360
+        const world     = ((deg + armAngle) % 360 + 360) % 360        // 0–360
+        const normed    = world > 180 ? world - 360 : world            // –180 to 180
+        // cosine falloff: 1 at front (0°), 0 at sides (±90°), hidden behind
+        const opacity   = Math.abs(normed) < 90
+          ? Math.max(0, Math.cos(normed * Math.PI / 180))
+          : 0
+        arm.style.opacity = String(opacity)
       })
     }
 
@@ -120,42 +120,60 @@ export default function HomeClient({ works }: { works: any[] }) {
           </div>
         </div>
 
-        {/* Flat-ring carousel */}
-        <div
-          className="relative w-full"
-          style={{ height: '210px', perspective: '2400px' }}
-        >
-          {/* Origin — all cards positioned relative to this centre point */}
+        {/* Arm-based ring carousel (same technique as aeline) */}
+        <div className="relative w-full" style={{ height: '220px' }}>
+          {/* Rotating ring — transform updated by GSAP ticker */}
           <div
             ref={carouselRef}
-            className="absolute"
-            style={{ top: '50%', left: '50%', width: 0, height: 0, transformStyle: 'preserve-3d' }}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: 0,
+              height: 0,
+              transformStyle: 'preserve-3d',
+              transform: 'translate(-50%, -50%) perspective(3000px) rotateX(10deg) rotateY(0deg)',
+            }}
           >
-            {orbitCards.map((c, i) => (
-              <div
-                key={i}
-                className={`absolute rounded-2xl border p-4 flex flex-col [backdrop-filter:blur(16px)] [box-shadow:0_12px_40px_rgba(0,0,0,0.2)] ${c.dark ? 'bg-[#0a0a0a]/90 border-white/20' : 'bg-white/92 border-white/60'}`}
-                style={{ width: '220px', height: '155px', marginLeft: '-110px', marginTop: '-77px' }}
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <span className={`text-xs font-bold tracking-wide ${c.dark ? 'text-white/50' : 'text-[#0a0a0a]'}`}>{c.name}</span>
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.dot }} />
-                </div>
-                <div className={`text-3xl font-extrabold tracking-tight leading-none ${c.dark ? 'text-white' : 'text-[#0a0a0a]'}`}>{c.big}</div>
-                <div className={`text-xs font-medium mt-1 ${c.dark ? 'text-white/35' : 'text-[#888]'}`}>{c.label}</div>
-                <div className={`h-0.5 rounded-full my-2.5 ${c.dark ? 'bg-white/10' : 'bg-[#e5e5e5]'}`}>
-                  <div className="h-full rounded-full" style={{ width: `${c.bar}%`, background: c.barColor }} />
-                </div>
-                <div className="flex flex-col gap-1">
-                  {c.rows.map(([l, r], j) => (
-                    <div key={j} className={`flex justify-between items-center rounded-md px-2 py-1 ${c.dark ? 'bg-white/[0.06]' : 'bg-[#f5f5f7]'}`}>
-                      <span className={`text-xs font-medium ${c.dark ? 'text-white/40' : 'text-[#555]'}`}>{l}</span>
-                      <span className={`text-xs font-bold ${c.dark ? 'text-[#d4f53c]' : 'text-[#0a0a0a]'}`}>{r}</span>
+            {orbitCards.map((c, i) => {
+              const armAngle = (i / orbitCards.length) * 360
+              return (
+                // Arm — fixed angle, card sits at the end via translateZ
+                <div
+                  key={i}
+                  style={{
+                    position: 'absolute',
+                    width: 0,
+                    height: 0,
+                    transformStyle: 'preserve-3d',
+                    transform: `rotateY(${armAngle}deg)`,
+                  }}
+                >
+                  <div
+                    className={`absolute rounded-2xl border p-4 flex flex-col [box-shadow:0_12px_40px_rgba(0,0,0,0.22)] ${c.dark ? 'bg-[#0a0a0a] border-white/20' : 'bg-white border-white/60'}`}
+                    style={{ width: '220px', height: '155px', marginLeft: '-110px', marginTop: '-77px', transform: 'translateZ(380px)' }}
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <span className={`text-xs font-bold tracking-wide ${c.dark ? 'text-white/50' : 'text-[#0a0a0a]'}`}>{c.name}</span>
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.dot }} />
                     </div>
-                  ))}
+                    <div className={`text-3xl font-extrabold tracking-tight leading-none ${c.dark ? 'text-white' : 'text-[#0a0a0a]'}`}>{c.big}</div>
+                    <div className={`text-xs font-medium mt-1 ${c.dark ? 'text-white/35' : 'text-[#888]'}`}>{c.label}</div>
+                    <div className={`h-0.5 rounded-full my-2.5 ${c.dark ? 'bg-white/10' : 'bg-[#e5e5e5]'}`}>
+                      <div className="h-full rounded-full" style={{ width: `${c.bar}%`, background: c.barColor }} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      {c.rows.map(([l, r], j) => (
+                        <div key={j} className={`flex justify-between items-center rounded-md px-2 py-1 ${c.dark ? 'bg-white/[0.06]' : 'bg-[#f5f5f7]'}`}>
+                          <span className={`text-xs font-medium ${c.dark ? 'text-white/40' : 'text-[#555]'}`}>{l}</span>
+                          <span className={`text-xs font-bold ${c.dark ? 'text-[#d4f53c]' : 'text-[#0a0a0a]'}`}>{r}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
