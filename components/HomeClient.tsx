@@ -11,16 +11,15 @@ const carouselCards = [
   { name: 'Experience',     big: '11+', label: 'Years designing', bar: 90,  barColor: '#d4f53c', rows: [['Industries', '8+'],   ['Projects', '20+']],      dot: '#d4f53c', dark: true  },
 ]
 
-// 2 sets — 8 cards total, 45° apart on the ring
-const orbitCards = [...carouselCards, ...carouselCards]
+// 3 sets — 12 cards total, 30° apart on the ring → cards sit closer together
+const orbitCards = [...carouselCards, ...carouselCards, ...carouselCards]
 
 const navLinkCls = 'text-xs font-semibold text-white/70 no-underline px-4 py-2 rounded-lg tracking-widest uppercase hover:bg-white/10 hover:text-white transition-all duration-150'
 
 export default function HomeClient({ works }: { works: any[] }) {
   const carouselRef = useRef<HTMLDivElement>(null)
   const itemsRef    = useRef<HTMLElement[]>([])
-  const progressRef = useRef(0)          // radians
-  const pausedRef   = useRef(false)
+  const progressRef = useRef(0)
 
   useEffect(() => {
     // Scroll reveal
@@ -39,16 +38,10 @@ export default function HomeClient({ works }: { works: any[] }) {
     // hides back cards automatically. No arm divs needed.
     const items = itemsRef.current.filter(Boolean)
     const total = items.length
-    const RADIUS = 370
-
-    const onEnter = () => { pausedRef.current = true }
-    const onLeave = () => { pausedRef.current = false }
-    const container = carouselRef.current?.parentElement?.parentElement
-    container?.addEventListener('mouseenter', onEnter)
-    container?.addEventListener('mouseleave', onLeave)
+    const RADIUS = 520
 
     const tick = (_time: number, deltaTime: number) => {
-      if (!pausedRef.current) progressRef.current += deltaTime * 0.00018  // ~0.62°/frame @ 60fps → ~60s full orbit
+      progressRef.current += deltaTime * 0.00018
 
       items.forEach((el, i) => {
         const angle   = (i / total) * Math.PI * 2 + progressRef.current
@@ -64,8 +57,6 @@ export default function HomeClient({ works }: { works: any[] }) {
     return () => {
       obs.disconnect()
       gsap.ticker.remove(tick)
-      container?.removeEventListener('mouseenter', onEnter)
-      container?.removeEventListener('mouseleave', onLeave)
     }
   }, [])
 
@@ -74,10 +65,10 @@ export default function HomeClient({ works }: { works: any[] }) {
   return (
     <>
       {/* ── NAV — logo left · links center · spacer right ── */}
-      <nav className="absolute top-0 left-0 right-0 z-[100] flex items-center h-16 px-8 md:px-16">
-        <div className="flex-1">
+      <nav className="absolute top-0 left-0 right-0 z-[100] flex items-center justify-between h-16 px-8 md:px-16">
+        <div>
           <Link href="/" className="text-2xl font-extrabold text-white no-underline tracking-tight flex items-center gap-0.5">
-            <span className="text-xl opacity-80">®</span>B
+            <span className="text-xxl opacity-80">®</span>B
           </Link>
         </div>
         <div className="flex items-center gap-1">
@@ -85,32 +76,35 @@ export default function HomeClient({ works }: { works: any[] }) {
           <Link href="/about" className={navLinkCls}>About</Link>
           <a href="https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing" target="_blank" className={navLinkCls}>Resume</a>
         </div>
-        <div className="flex-1" />
-      </nav>
-
-      {/* ── HERO ── */}
-      <section className="min-h-screen relative flex flex-col items-center justify-center [background:linear-gradient(180deg,#1e88e5_0%,#2196f3_15%,#42a5f5_35%,#64b5f6_55%,#90caf9_72%,#bbdefb_86%,#e3f2fd_95%,#f5f9ff_100%)]">
-
-        {/* Headline + buttons */}
-        <div className="relative z-10 text-center w-full max-w-3xl mx-auto px-6 pt-28 pb-10">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-tight tracking-tight text-white [text-shadow:0_2px_32px_rgba(0,0,0,0.18)] mb-6">
-            Senior UX Designer<br />
-            <span className="text-white/60">based in Bangalore</span>
-          </h1>
-          <p className="text-base md:text-lg leading-relaxed text-white/70 mb-10 max-w-md mx-auto">
-            11+ years designing digital products across fintech, insurance, media and real estate.
-          </p>
-          <div className="flex gap-3 items-center justify-center flex-wrap">
-            <a href="#work" className="text-xs font-semibold tracking-widest uppercase text-white/90 bg-white/10 border border-white/30 px-6 py-3 rounded-full no-underline hover:bg-white/20 transition-colors">
-              VIEW WORK
-            </a>
-            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="text-xs font-bold tracking-widest uppercase text-[#0a0a0a] bg-[#d4f53c] px-6 py-3 rounded-full no-underline inline-flex items-center gap-2 [box-shadow:0_4px_24px_rgba(212,245,60,0.4)] hover:opacity-90 transition-opacity">
+        <div className="flex items-center gap-1">
+          <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="text-xs font-bold tracking-widest uppercase text-[#0a0a0a] bg-[#d4f53c] px-6 py-3 rounded-full no-underline inline-flex items-center gap-2 [box-shadow:0_4px_24px_rgba(212,245,60,0.4)] hover:opacity-90 transition-opacity">
               GET IN TOUCH
               <span className="w-6 h-6 rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#d4f53c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </span>
             </a>
-          </div>
+        </div>
+      </nav>
+
+      {/* ── HERO ── */}
+      <section className="min-h-[82vh] relative flex flex-col items-center justify-center pb-32 [background:linear-gradient(180deg,#1e88e5_0%,#2196f3_15%,#42a5f5_35%,#64b5f6_55%,#90caf9_72%,#bbdefb_86%,#e3f2fd_95%,#f5f9ff00_100%)]">
+
+        {/* Cloud image — decorative bg layer */}
+        <img
+          src="/cloud.avif"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none opacity-40"
+        />
+
+        {/* Headline + buttons */}
+        <div className="relative z-10 text-center w-full max-w-3xl mx-auto px-6">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-medium leading-tight tracking-tight text-white [text-shadow:0_2px_32px_rgba(0,0,0,0.18)] mb-6">
+            Senior UX Designer
+          </h1>
+          <p className="text-base md:text-lg leading-relaxed text-white/70  max-w-md mx-auto">
+            11+ years designing digital products across fintech, insurance, media and real estate.
+          </p>
         </div>
 
         {/* 3D ring carousel */}
@@ -118,7 +112,7 @@ export default function HomeClient({ works }: { works: any[] }) {
             because preserve-3d lives on the INNER carousel div, not this one */}
         <div
           className="relative w-full"
-          style={{ height: '220px', perspective: '1800px', overflow: 'hidden' }}
+          style={{ height: '260px', perspective: '2200px' }}
         >
           {/* Inner: preserve-3d, gentle tilt so ring looks viewed from slightly above */}
           <div
@@ -169,7 +163,6 @@ export default function HomeClient({ works }: { works: any[] }) {
           </div>
         </div>
 
-        <div className="pb-12" />
       </section>
 
       {/* ── CASE STUDIES ── */}
@@ -178,7 +171,7 @@ export default function HomeClient({ works }: { works: any[] }) {
           <div className="text-xs font-semibold text-[#888] tracking-widest uppercase mb-3.5 flex items-center justify-center gap-2">
             <span className="text-[#0a0a0a]">•</span> CASE STUDIES
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#0a0a0a] leading-tight mb-3.5">Selected work</h2>
+          <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#0a0a0a] leading-tight mb-3.5">Selected work</h2>
           <p className="text-base text-[#888] leading-relaxed max-w-sm mx-auto">End-to-end UX design across research, systems and interfaces.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto p-4 rounded-2xl bg-[#f5f5f7]">
@@ -200,7 +193,7 @@ export default function HomeClient({ works }: { works: any[] }) {
                   ))}
                 </div>
               </div>
-              <div className="px-8 pt-6 pb-8 border-t border-[#ebebeb] text-center">
+              <div className="px-8 pt-6 pb-8 text-center">
                 <div className="text-xl font-bold text-[#0a0a0a] tracking-tight mb-2 leading-snug">{work.title}</div>
                 <div className="text-sm text-[#888] leading-relaxed max-w-xs mx-auto">{work.summary}</div>
               </div>
