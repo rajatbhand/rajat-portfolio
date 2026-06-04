@@ -18,6 +18,8 @@ const navLinkCls = 'text-xs font-semibold text-white/70 no-underline px-4 py-2 r
 
 export default function HomeClient({ works }: { works: any[] }) {
   const carouselRef = useRef<HTMLDivElement>(null)
+  const itemsRef    = useRef<HTMLElement[]>([])
+  const progressRef = useRef(0)          // radians
   const pausedRef   = useRef(false)
 
   useEffect(() => {
@@ -30,39 +32,30 @@ export default function HomeClient({ works }: { works: any[] }) {
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
     els.forEach(el => obs.observe(el))
 
-    // Arm-based ring — exact same technique as aeline.framer.website
-    // The whole ring container rotates (rotateY), each arm is fixed inside it,
-    // card sits at the end of each arm (translateZ). rotateX(10deg) = looking from above.
-    const container = carouselRef.current
-    if (!container) return () => obs.disconnect()
-
-    const arms  = Array.from(container.children) as HTMLElement[]
-    const total = arms.length
-    let   deg   = 0
+    // Per-card 3D ring — technique from video tutorial
+    // Container has CSS perspective (separate from preserve-3d carousel inside).
+    // Each card gets gsap.set({ x, z, rotateY }) every frame.
+    // rotateY = angle*(180/π) makes each card face inward; backface-visibility:hidden
+    // hides back cards automatically. No arm divs needed.
+    const items = itemsRef.current.filter(Boolean)
+    const total = items.length
+    const RADIUS = 370
 
     const onEnter = () => { pausedRef.current = true }
     const onLeave = () => { pausedRef.current = false }
-    const wrapper = container.parentElement
-    wrapper?.addEventListener('mouseenter', onEnter)
-    wrapper?.addEventListener('mouseleave', onLeave)
+    const container = carouselRef.current?.parentElement?.parentElement
+    container?.addEventListener('mouseenter', onEnter)
+    container?.addEventListener('mouseleave', onLeave)
 
     const tick = (_time: number, deltaTime: number) => {
-      if (!pausedRef.current) deg += deltaTime * 0.008   // ~8 deg/sec
+      if (!pausedRef.current) progressRef.current += deltaTime * 0.00018  // ~0.62°/frame @ 60fps → ~60s full orbit
 
-      // Rotate the whole ring
-      container.style.transform =
-        `translate(-50%, -50%) perspective(3000px) rotateX(10deg) rotateY(${deg}deg)`
-
-      // Fade out arms that are at the back of the ring
-      arms.forEach((arm, i) => {
-        const armAngle  = (i / total) * 360
-        const world     = ((deg + armAngle) % 360 + 360) % 360        // 0–360
-        const normed    = world > 180 ? world - 360 : world            // –180 to 180
-        // cosine falloff: 1 at front (0°), 0 at sides (±90°), hidden behind
-        const opacity   = Math.abs(normed) < 90
-          ? Math.max(0, Math.cos(normed * Math.PI / 180))
-          : 0
-        arm.style.opacity = String(opacity)
+      items.forEach((el, i) => {
+        const angle   = (i / total) * Math.PI * 2 + progressRef.current
+        const x       = Math.sin(angle) * RADIUS
+        const z       = Math.cos(angle) * RADIUS
+        const rotateY = angle * (180 / Math.PI)
+        gsap.set(el, { x, z, rotateY })
       })
     }
 
@@ -71,8 +64,8 @@ export default function HomeClient({ works }: { works: any[] }) {
     return () => {
       obs.disconnect()
       gsap.ticker.remove(tick)
-      wrapper?.removeEventListener('mouseenter', onEnter)
-      wrapper?.removeEventListener('mouseleave', onLeave)
+      container?.removeEventListener('mouseenter', onEnter)
+      container?.removeEventListener('mouseleave', onLeave)
     }
   }, [])
 
@@ -120,9 +113,14 @@ export default function HomeClient({ works }: { works: any[] }) {
           </div>
         </div>
 
-        {/* Arm-based ring carousel (same technique as aeline) */}
-        <div className="relative w-full" style={{ height: '220px' }}>
-          {/* Rotating ring — transform updated by GSAP ticker */}
+        {/* 3D ring carousel */}
+        {/* Outer: perspective (CSS property) + overflow clip — safe to have overflow:hidden here
+            because preserve-3d lives on the INNER carousel div, not this one */}
+        <div
+          className="relative w-full"
+          style={{ height: '220px', perspective: '1800px', overflow: 'hidden' }}
+        >
+          {/* Inner: preserve-3d, gentle tilt so ring looks viewed from slightly above */}
           <div
             ref={carouselRef}
             style={{
@@ -132,48 +130,42 @@ export default function HomeClient({ works }: { works: any[] }) {
               width: 0,
               height: 0,
               transformStyle: 'preserve-3d',
-              transform: 'translate(-50%, -50%) perspective(3000px) rotateX(10deg) rotateY(0deg)',
+              transform: 'rotateX(-8deg)',
             }}
           >
-            {orbitCards.map((c, i) => {
-              const armAngle = (i / orbitCards.length) * 360
-              return (
-                // Arm — fixed angle, card sits at the end via translateZ
-                <div
-                  key={i}
-                  style={{
-                    position: 'absolute',
-                    width: 0,
-                    height: 0,
-                    transformStyle: 'preserve-3d',
-                    transform: `rotateY(${armAngle}deg)`,
-                  }}
-                >
-                  <div
-                    className={`absolute rounded-2xl border p-4 flex flex-col [box-shadow:0_12px_40px_rgba(0,0,0,0.22)] ${c.dark ? 'bg-[#0a0a0a] border-white/20' : 'bg-white border-white/60'}`}
-                    style={{ width: '220px', height: '155px', marginLeft: '-110px', marginTop: '-77px', transform: 'translateZ(380px)' }}
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <span className={`text-xs font-bold tracking-wide ${c.dark ? 'text-white/50' : 'text-[#0a0a0a]'}`}>{c.name}</span>
-                      <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.dot }} />
-                    </div>
-                    <div className={`text-3xl font-extrabold tracking-tight leading-none ${c.dark ? 'text-white' : 'text-[#0a0a0a]'}`}>{c.big}</div>
-                    <div className={`text-xs font-medium mt-1 ${c.dark ? 'text-white/35' : 'text-[#888]'}`}>{c.label}</div>
-                    <div className={`h-0.5 rounded-full my-2.5 ${c.dark ? 'bg-white/10' : 'bg-[#e5e5e5]'}`}>
-                      <div className="h-full rounded-full" style={{ width: `${c.bar}%`, background: c.barColor }} />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      {c.rows.map(([l, r], j) => (
-                        <div key={j} className={`flex justify-between items-center rounded-md px-2 py-1 ${c.dark ? 'bg-white/[0.06]' : 'bg-[#f5f5f7]'}`}>
-                          <span className={`text-xs font-medium ${c.dark ? 'text-white/40' : 'text-[#555]'}`}>{l}</span>
-                          <span className={`text-xs font-bold ${c.dark ? 'text-[#d4f53c]' : 'text-[#0a0a0a]'}`}>{r}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+            {orbitCards.map((c, i) => (
+              <div
+                key={i}
+                ref={(el) => { if (el) itemsRef.current[i] = el }}
+                className={`absolute rounded-2xl border p-4 flex flex-col [box-shadow:0_12px_40px_rgba(0,0,0,0.22)] ${c.dark ? 'bg-[#0a0a0a] border-white/20' : 'bg-white border-white/60'}`}
+                style={{
+                  width: '220px',
+                  height: '155px',
+                  marginLeft: '-110px',
+                  marginTop: '-77px',
+                  backfaceVisibility: 'hidden',   // auto-hides back-half cards
+                  WebkitBackfaceVisibility: 'hidden',
+                }}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <span className={`text-xs font-bold tracking-wide ${c.dark ? 'text-white/50' : 'text-[#0a0a0a]'}`}>{c.name}</span>
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.dot }} />
                 </div>
-              )
-            })}
+                <div className={`text-3xl font-extrabold tracking-tight leading-none ${c.dark ? 'text-white' : 'text-[#0a0a0a]'}`}>{c.big}</div>
+                <div className={`text-xs font-medium mt-1 ${c.dark ? 'text-white/35' : 'text-[#888]'}`}>{c.label}</div>
+                <div className={`h-0.5 rounded-full my-2.5 ${c.dark ? 'bg-white/10' : 'bg-[#e5e5e5]'}`}>
+                  <div className="h-full rounded-full" style={{ width: `${c.bar}%`, background: c.barColor }} />
+                </div>
+                <div className="flex flex-col gap-1">
+                  {c.rows.map(([l, r], j) => (
+                    <div key={j} className={`flex justify-between items-center rounded-md px-2 py-1 ${c.dark ? 'bg-white/[0.06]' : 'bg-[#f5f5f7]'}`}>
+                      <span className={`text-xs font-medium ${c.dark ? 'text-white/40' : 'text-[#555]'}`}>{l}</span>
+                      <span className={`text-xs font-bold ${c.dark ? 'text-[#d4f53c]' : 'text-[#0a0a0a]'}`}>{r}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
