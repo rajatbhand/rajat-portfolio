@@ -10,7 +10,7 @@ const carouselCards = [
   { name: 'Experience',     big: '11+', label: 'Years designing', bar: 90,  barColor: '#d4f53c', rows: [['Industries', '8+'],   ['Projects', '20+']],      dot: '#d4f53c', dark: true  },
 ]
 
-const navLinkCls = 'text-xs font-medium text-white/80 no-underline px-4 py-2 rounded-lg tracking-[0.04em] uppercase hover:bg-white/10 hover:text-white transition-all duration-150'
+const navLinkCls = 'text-xs font-semibold text-white/70 no-underline px-4 py-2 rounded-lg tracking-widest uppercase hover:bg-white/10 hover:text-white transition-all duration-150'
 
 export default function HomeClient({ works }: { works: any[] }) {
   useEffect(() => {
@@ -28,60 +28,65 @@ export default function HomeClient({ works }: { works: any[] }) {
 
   return (
     <>
-      {/* NAV */}
-      <nav className="absolute top-0 left-0 right-0 z-[100] flex items-center justify-between h-[4.5rem] px-[3.75rem]">
-        <Link href="/" className="text-[1.75rem] font-extrabold text-white no-underline tracking-[-0.04em] flex items-center">
-          <span className="text-[1.375rem] opacity-90">®</span>B
-        </Link>
-        <div className="flex items-center gap-1">
-          <a href="#work" className={navLinkCls}>WORK</a>
-          <Link href="/about" className={navLinkCls}>ABOUT</Link>
-          <a href="https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing" target="_blank" className={navLinkCls}>RESUME</a>
+      {/* ── NAV ── logo left | links center | spacer right */}
+      <nav className="absolute top-0 left-0 right-0 z-[100] flex items-center h-16 px-8 md:px-16">
+        <div className="flex-1">
+          <Link href="/" className="text-2xl font-extrabold text-white no-underline tracking-tight flex items-center gap-0.5">
+            <span className="text-xl opacity-80">®</span>B
+          </Link>
         </div>
+        <div className="flex items-center gap-1">
+          <a href="#work" className={navLinkCls}>Work</a>
+          <Link href="/about" className={navLinkCls}>About</Link>
+          <a href="https://docs.google.com/document/d/15LtMI0jpmZnQsqXwM5i7eeDp8LIsGu5tfiwo7n97w8Y/edit?usp=sharing" target="_blank" className={navLinkCls}>Resume</a>
+        </div>
+        <div className="flex-1" />
       </nav>
 
-      {/* HERO */}
-      <section className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center pt-[6.25rem] pb-[3.75rem] px-[3.75rem] [background:linear-gradient(180deg,#2196f3_0%,#42a5f5_25%,#64b5f6_50%,#90caf9_70%,#bbdefb_85%,#e3f2fd_95%,#f5f9ff_100%)]">
-        <div className="relative z-10 text-center max-w-[42.5rem] mb-14">
-          <h1 className="text-[clamp(2.75rem,7vw,4.75rem)] font-extrabold leading-[1.06] tracking-[-0.03em] text-white [text-shadow:0_2px_20px_rgba(0,0,0,0.12)] mb-5">
-            Senior UX Designer<br />based in Bangalore
+      {/* ── HERO ── */}
+      <section className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center [background:linear-gradient(180deg,#1e88e5_0%,#2196f3_15%,#42a5f5_35%,#64b5f6_55%,#90caf9_72%,#bbdefb_86%,#e3f2fd_95%,#f5f9ff_100%)]">
+
+        {/* Centered headline + buttons */}
+        <div className="relative z-10 text-center w-full max-w-3xl mx-auto px-6 pt-28 pb-12">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-tight tracking-tight text-white [text-shadow:0_2px_32px_rgba(0,0,0,0.18)] mb-6">
+            Senior UX Designer<br />
+            <span className="text-white/60">based in Bangalore</span>
           </h1>
-          <p className="text-base leading-[1.65] text-white/80 mb-9">
-            11+ years designing digital products across fintech,<br />
-            insurance, media and real estate.
+          <p className="text-base md:text-lg leading-relaxed text-white/70 mb-10 max-w-md mx-auto">
+            11+ years designing digital products across fintech, insurance, media and real estate.
           </p>
           <div className="flex gap-3 items-center justify-center flex-wrap">
-            <a href="#work" className="text-[0.8125rem] font-semibold text-white/90 bg-white/10 border border-white/30 px-6 py-3 rounded-full no-underline tracking-[0.04em] uppercase hover:bg-white/20 transition-colors">
+            <a href="#work" className="text-xs font-semibold tracking-widest uppercase text-white/90 bg-white/10 border border-white/30 px-6 py-3 rounded-full no-underline hover:bg-white/20 transition-colors">
               VIEW WORK
             </a>
-            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="text-[0.8125rem] font-bold text-[#0a0a0a] bg-[#d4f53c] px-6 py-3 rounded-full no-underline tracking-[0.04em] uppercase inline-flex items-center gap-2 [box-shadow:0_4px_20px_rgba(212,245,60,0.35)] hover:opacity-90 transition-opacity">
+            <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="text-xs font-bold tracking-widest uppercase text-[#0a0a0a] bg-[#d4f53c] px-6 py-3 rounded-full no-underline inline-flex items-center gap-2 [box-shadow:0_4px_24px_rgba(212,245,60,0.4)] hover:opacity-90 transition-opacity">
               GET IN TOUCH
-              <span className="w-[1.375rem] h-[1.375rem] rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
+              <span className="w-6 h-6 rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#d4f53c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </span>
             </a>
           </div>
         </div>
 
-        {/* Carousel */}
-        <div className="relative z-10 w-screen overflow-hidden -mx-[3.75rem] py-2 pb-6">
+        {/* Stat card carousel — full width, no negative margin needed */}
+        <div className="relative z-10 w-full overflow-hidden pb-16">
           <div className="rb-carousel-track">
             {[...carouselCards, ...carouselCards].map((c, i) => (
-              <div key={i} className={`shrink-0 w-[16.25rem] h-[11.25rem] rounded-2xl overflow-hidden border p-4 flex flex-col cursor-pointer [backdrop-filter:blur(20px)] [box-shadow:0_16px_48px_rgba(0,0,0,0.18)] hover:-translate-y-1.5 transition-transform duration-300 ${c.dark ? 'bg-[#0a0a0a] border-white/20' : 'bg-white/90 border-white/70'}`}>
-                <div className="flex justify-between items-center mb-2.5">
-                  <span className={`text-[0.6875rem] font-bold tracking-[0.02em] ${c.dark ? 'text-white/50' : 'text-[#0a0a0a]'}`}>{c.name}</span>
+              <div key={i} className={`shrink-0 w-64 h-44 rounded-2xl border p-4 flex flex-col cursor-pointer [backdrop-filter:blur(20px)] [box-shadow:0_16px_48px_rgba(0,0,0,0.2)] hover:-translate-y-1.5 transition-transform duration-300 ${c.dark ? 'bg-[#0a0a0a]/90 border-white/20' : 'bg-white/90 border-white/60'}`}>
+                <div className="flex justify-between items-center mb-2">
+                  <span className={`text-xs font-bold tracking-wide ${c.dark ? 'text-white/50' : 'text-[#0a0a0a]'}`}>{c.name}</span>
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.dot }} />
                 </div>
-                <div className={`text-3xl font-extrabold tracking-[-0.03em] leading-none ${c.dark ? 'text-white' : 'text-[#0a0a0a]'}`}>{c.big}</div>
-                <div className={`text-[0.625rem] font-medium mt-1 ${c.dark ? 'text-white/35' : 'text-[#888]'}`}>{c.label}</div>
+                <div className={`text-3xl font-extrabold tracking-tight leading-none ${c.dark ? 'text-white' : 'text-[#0a0a0a]'}`}>{c.big}</div>
+                <div className={`text-xs font-medium mt-1 ${c.dark ? 'text-white/35' : 'text-[#888]'}`}>{c.label}</div>
                 <div className={`h-0.5 rounded-full my-2.5 ${c.dark ? 'bg-white/10' : 'bg-[#e5e5e5]'}`}>
                   <div className="h-full rounded-full" style={{ width: `${c.bar}%`, background: c.barColor }} />
                 </div>
                 <div className="flex flex-col gap-1">
                   {c.rows.map(([l, r], j) => (
                     <div key={j} className={`flex justify-between items-center rounded-md px-2 py-1 ${c.dark ? 'bg-white/[0.06]' : 'bg-[#f5f5f7]'}`}>
-                      <span className={`text-[0.5625rem] font-medium ${c.dark ? 'text-white/40' : 'text-[#555]'}`}>{l}</span>
-                      <span className={`text-[0.5625rem] font-bold ${c.dark ? 'text-[#d4f53c]' : 'text-[#0a0a0a]'}`}>{r}</span>
+                      <span className={`text-xs font-medium ${c.dark ? 'text-white/40' : 'text-[#555]'}`}>{l}</span>
+                      <span className={`text-xs font-bold ${c.dark ? 'text-[#d4f53c]' : 'text-[#0a0a0a]'}`}>{r}</span>
                     </div>
                   ))}
                 </div>
