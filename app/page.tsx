@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import siteData from '@/data/site.json'
 import HomeClient from '@/components/HomeClient'
 
 export const dynamic = 'force-dynamic'
@@ -19,5 +18,5 @@ async function getProjects() {
 
 export default async function Home() {
   const projects = await getProjects()
-  return <HomeClient works={projects} site={siteData} />
+  return <HomeClient works={projects} />
 }
