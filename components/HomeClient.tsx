@@ -96,7 +96,7 @@ export default function HomeClient({ works }: { works: any[] }) {
       </nav>
 
       {/* ── HERO ── */}
-      <section className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center [background:linear-gradient(180deg,#1e88e5_0%,#2196f3_15%,#42a5f5_35%,#64b5f6_55%,#90caf9_72%,#bbdefb_86%,#e3f2fd_95%,#f5f9ff_100%)]">
+      <section className="min-h-screen relative flex flex-col items-center justify-center [background:linear-gradient(180deg,#1e88e5_0%,#2196f3_15%,#42a5f5_35%,#64b5f6_55%,#90caf9_72%,#bbdefb_86%,#e3f2fd_95%,#f5f9ff_100%)]">
 
         {/* Headline + buttons */}
         <div className="relative z-10 text-center w-full max-w-3xl mx-auto px-6 pt-28 pb-10">
