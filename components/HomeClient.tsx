@@ -16,7 +16,9 @@ export default function HomeClient({ works }: { works: any[] }) {
   useEffect(() => {
     const els = document.querySelectorAll('.reveal')
     const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target) } })
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target) }
+      })
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' })
     els.forEach(el => obs.observe(el))
     return () => obs.disconnect()
@@ -26,8 +28,8 @@ export default function HomeClient({ works }: { works: any[] }) {
 
   return (
     <>
-      {/* ─── NAV ─────────────────────────────────────────────────────────────── */}
-      <nav className="absolute top-0 left-0 right-0 z-[100] flex items-center justify-between px-15 h-18">
+      {/* NAV */}
+      <nav className="absolute top-0 left-0 right-0 z-[100] flex items-center justify-between h-[4.5rem] px-[3.75rem]">
         <Link href="/" className="text-[1.75rem] font-extrabold text-white no-underline tracking-[-0.04em] flex items-center">
           <span className="text-[1.375rem] opacity-90">®</span>B
         </Link>
@@ -38,8 +40,8 @@ export default function HomeClient({ works }: { works: any[] }) {
         </div>
       </nav>
 
-      {/* ─── HERO ────────────────────────────────────────────────────────────── */}
-      <section className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center pt-25 pb-15 px-15 [background:linear-gradient(180deg,#2196f3_0%,#42a5f5_25%,#64b5f6_50%,#90caf9_70%,#bbdefb_85%,#e3f2fd_95%,#f5f9ff_100%)]">
+      {/* HERO */}
+      <section className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center pt-[6.25rem] pb-[3.75rem] px-[3.75rem] [background:linear-gradient(180deg,#2196f3_0%,#42a5f5_25%,#64b5f6_50%,#90caf9_70%,#bbdefb_85%,#e3f2fd_95%,#f5f9ff_100%)]">
         <div className="relative z-10 text-center max-w-[42.5rem] mb-14">
           <h1 className="text-[clamp(2.75rem,7vw,4.75rem)] font-extrabold leading-[1.06] tracking-[-0.03em] text-white [text-shadow:0_2px_20px_rgba(0,0,0,0.12)] mb-5">
             Senior UX Designer<br />based in Bangalore
@@ -54,7 +56,7 @@ export default function HomeClient({ works }: { works: any[] }) {
             </a>
             <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="text-[0.8125rem] font-bold text-[#0a0a0a] bg-[#d4f53c] px-6 py-3 rounded-full no-underline tracking-[0.04em] uppercase inline-flex items-center gap-2 [box-shadow:0_4px_20px_rgba(212,245,60,0.35)] hover:opacity-90 transition-opacity">
               GET IN TOUCH
-              <span className="w-5.5 h-5.5 rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
+              <span className="w-[1.375rem] h-[1.375rem] rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#d4f53c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </span>
             </a>
@@ -62,10 +64,10 @@ export default function HomeClient({ works }: { works: any[] }) {
         </div>
 
         {/* Carousel */}
-        <div className="relative z-10 w-screen overflow-hidden -mx-15 py-2 pb-6">
+        <div className="relative z-10 w-screen overflow-hidden -mx-[3.75rem] py-2 pb-6">
           <div className="rb-carousel-track">
             {[...carouselCards, ...carouselCards].map((c, i) => (
-              <div key={i} className={`shrink-0 w-65 h-45 rounded-2xl overflow-hidden border p-4 flex flex-col cursor-pointer [backdrop-filter:blur(20px)] [box-shadow:0_16px_48px_rgba(0,0,0,0.18)] hover:-translate-y-1.5 transition-transform duration-300 ${c.dark ? 'bg-[#0a0a0a] border-white/20' : 'bg-white/90 border-white/70'}`}>
+              <div key={i} className={`shrink-0 w-[16.25rem] h-[11.25rem] rounded-2xl overflow-hidden border p-4 flex flex-col cursor-pointer [backdrop-filter:blur(20px)] [box-shadow:0_16px_48px_rgba(0,0,0,0.18)] hover:-translate-y-1.5 transition-transform duration-300 ${c.dark ? 'bg-[#0a0a0a] border-white/20' : 'bg-white/90 border-white/70'}`}>
                 <div className="flex justify-between items-center mb-2.5">
                   <span className={`text-[0.6875rem] font-bold tracking-[0.02em] ${c.dark ? 'text-white/50' : 'text-[#0a0a0a]'}`}>{c.name}</span>
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.dot }} />
@@ -89,8 +91,8 @@ export default function HomeClient({ works }: { works: any[] }) {
         </div>
       </section>
 
-      {/* ─── CASE STUDIES ────────────────────────────────────────────────────── */}
-      <section id="work" className="bg-white py-25 px-15">
+      {/* CASE STUDIES */}
+      <section id="work" className="bg-white py-[6.25rem] px-[3.75rem]">
         <div className="reveal text-center mb-14">
           <div className="text-xs font-semibold text-[#888] tracking-[0.14em] uppercase mb-3.5 flex items-center justify-center gap-2">
             <span className="text-[#0a0a0a]">•</span> CASE STUDIES
@@ -98,13 +100,12 @@ export default function HomeClient({ works }: { works: any[] }) {
           <h2 className="text-[clamp(2.125rem,5vw,3.5rem)] font-extrabold tracking-[-0.035em] text-[#0a0a0a] leading-[1.06] mb-3.5">Selected work</h2>
           <p className="text-[0.9375rem] text-[#888] leading-[1.7] max-w-[28.75rem] mx-auto">End-to-end UX design across research, systems and interfaces.</p>
         </div>
-
         <div className="grid grid-cols-2 gap-4 max-w-[68.75rem] mx-auto p-4 rounded-[1.25rem] bg-[#f5f5f7]">
           {caseStudies.map((work, i) => (
             <Link key={work.slug} href={`/work/${work.slug}`} className={`reveal d${Math.min(i + 1, 4)} bg-white border border-[#e8e8e8] rounded-[1.25rem] overflow-hidden no-underline text-inherit flex flex-col transition-all duration-300 hover:[box-shadow:0_20px_60px_rgba(0,0,0,0.1)] hover:-translate-y-1`}>
               {/* Visual */}
-              <div className="min-h-65 bg-white flex items-center justify-center p-8 overflow-hidden">
-                <div className="bg-[#111] rounded-[0.875rem] [box-shadow:0_16px_48px_rgba(0,0,0,0.2)] p-4 w-50">
+              <div className="min-h-[16.25rem] bg-white flex items-center justify-center p-8 overflow-hidden">
+                <div className="bg-[#111] rounded-[0.875rem] [box-shadow:0_16px_48px_rgba(0,0,0,0.2)] p-4 w-[12.5rem]">
                   <div className="text-[0.5625rem] font-bold text-white/40 tracking-[0.06em] uppercase mb-2">{work.title}</div>
                   <div className="text-[1.75rem] font-extrabold text-white tracking-[-0.03em] leading-none">{work.year}</div>
                   <div className="text-[0.5625rem] text-white/35 mt-0.5">{work.role}</div>
@@ -129,8 +130,8 @@ export default function HomeClient({ works }: { works: any[] }) {
         </div>
       </section>
 
-      {/* ─── FAMILY & FRIENDS ────────────────────────────────────────────────── */}
-      <section className="bg-white py-25 px-15 border-t border-[#ebebeb]">
+      {/* FAMILY & FRIENDS */}
+      <section className="bg-white py-[6.25rem] px-[3.75rem] border-t border-[#ebebeb]">
         <div className="reveal text-center mb-14">
           <div className="text-xs font-semibold text-[#888] tracking-[0.14em] uppercase mb-3.5 flex items-center justify-center gap-2">
             <span className="text-[#0a0a0a]">•</span> SIDE PROJECTS
@@ -147,9 +148,9 @@ export default function HomeClient({ works }: { works: any[] }) {
         </div>
       </section>
 
-      {/* ─── FOOTER ──────────────────────────────────────────────────────────── */}
-      <footer id="contact" className="bg-white px-15 pt-10 pb-15">
-        <div className="max-w-[68.75rem] mx-auto bg-[#0e0e0e] rounded-3xl px-16 py-15 flex flex-col relative overflow-hidden min-h-90">
+      {/* FOOTER */}
+      <footer id="contact" className="bg-white px-[3.75rem] pt-10 pb-[3.75rem]">
+        <div className="max-w-[68.75rem] mx-auto bg-[#0e0e0e] rounded-3xl px-16 py-[3.75rem] flex flex-col relative overflow-hidden min-h-[22.5rem]">
           {/* Glow blobs */}
           <div className="absolute w-[25rem] h-[25rem] bg-[#2196f3] rounded-full blur-[5rem] opacity-20 -top-[9.375rem] -left-[6.25rem] pointer-events-none" />
           <div className="absolute w-[18.75rem] h-[18.75rem] bg-[#d4f53c] rounded-full blur-[5rem] opacity-20 -bottom-[6.25rem] -right-[5rem] pointer-events-none" />
@@ -161,7 +162,7 @@ export default function HomeClient({ works }: { works: any[] }) {
             <p className="text-[0.9375rem] text-white/35 leading-[1.7] mb-8 max-w-[22.5rem]">Open to full-time roles, freelance projects, and interesting conversations.</p>
             <a href="mailto:rajat.rajat.bhandari.1@gmail.com" className="text-[0.8125rem] font-bold text-[#0a0a0a] bg-[#d4f53c] px-6 py-3 rounded-full no-underline tracking-[0.04em] uppercase inline-flex items-center gap-2 [box-shadow:0_4px_20px_rgba(212,245,60,0.35)] hover:opacity-90 transition-opacity">
               GET IN TOUCH
-              <span className="w-5.5 h-5.5 rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
+              <span className="w-[1.375rem] h-[1.375rem] rounded-full bg-[#0a0a0a] flex items-center justify-center shrink-0">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#d4f53c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </span>
             </a>
@@ -171,10 +172,10 @@ export default function HomeClient({ works }: { works: any[] }) {
           <div className="flex items-center justify-between relative z-[1] pt-8 border-t border-white/10">
             <div className="flex gap-2.5 items-center">
               {[
-                { href: 'https://www.linkedin.com/in/rajatbhand/',      icon: 'fa-brands fa-linkedin-in', title: 'LinkedIn'  },
-                { href: 'https://www.behance.net/bhandrajat',           icon: 'fa-brands fa-behance',     title: 'Behance'   },
-                { href: 'https://dribbble.com/BhandRajat',              icon: 'fa-brands fa-dribbble',    title: 'Dribbble'  },
-                { href: 'https://www.instagram.com/bhandrajat.film',    icon: 'fa-brands fa-instagram',   title: 'Instagram' },
+                { href: 'https://www.linkedin.com/in/rajatbhand/',   icon: 'fa-brands fa-linkedin-in', title: 'LinkedIn'  },
+                { href: 'https://www.behance.net/bhandrajat',        icon: 'fa-brands fa-behance',     title: 'Behance'   },
+                { href: 'https://dribbble.com/BhandRajat',           icon: 'fa-brands fa-dribbble',    title: 'Dribbble'  },
+                { href: 'https://www.instagram.com/bhandrajat.film', icon: 'fa-brands fa-instagram',   title: 'Instagram' },
               ].map(s => (
                 <a key={s.title} href={s.href} target="_blank" title={s.title} className="w-11 h-11 rounded-xl bg-white/[0.07] border border-white/10 flex items-center justify-center text-white/40 no-underline text-base hover:bg-white/[0.14] hover:text-white hover:border-white/[0.22] transition-all">
                   <i className={s.icon} />
